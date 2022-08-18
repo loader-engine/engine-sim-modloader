@@ -61,6 +61,8 @@ class Intake : public Part {
         double m_flowRate;
         double m_totalFuelInjected;
 
+        double addPress;
+
     protected:
         double m_crossSectionArea;
         double m_inputFlowK;

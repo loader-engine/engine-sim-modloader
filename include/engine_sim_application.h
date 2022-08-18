@@ -26,15 +26,20 @@
 
 #include <vector>
 
+#include "./lua/lua.hpp"
+#include "./loader/logger.h"
+
 class EngineSimApplication {
     private:
         static std::string s_buildVersion;
+        static std::string s_modLoaderVersion;
 
     public:
         EngineSimApplication();
         virtual ~EngineSimApplication();
 
         static std::string getBuildVersion() { return s_buildVersion; }
+        static std::string getModLoaderVersion() { return s_modLoaderVersion; }
 
         void initialize(void *instance, ysContextObject::DeviceAPI api);
         void run();
@@ -89,6 +94,24 @@ class EngineSimApplication {
         virtual void initialize();
         virtual void process(float dt);
         virtual void render();
+
+        // LUA STUFF
+        void loadLua(std::string luaPath);
+        void unloadLua();
+        void luaFail(std::string error);
+        lua_State* L;
+
+        void luaSetupVars();
+        void luaSetInVar(ysKey::Code code, std::string* name);
+
+        void luaSetupEngineVars();
+        void luaSetVar(std::string name, std::string value);
+
+        void luaGetEngineVars();
+        std::string luaGetVar(std::string name);
+
+        // LUA FUNCTIONS
+        void luaProcess(float dt);
 
         float m_displayHeight;
         int m_gameWindowHeight;

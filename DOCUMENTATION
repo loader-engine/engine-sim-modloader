@@ -1,0 +1,52 @@
+  _                 _                                  _            
+ | |               | |                                (_)           
+ | | ___   __ _  __| | ___ _ __ ______ ___ _ __   __ _ _ _ __   ___ 
+ | |/ _ \ / _` |/ _` |/ _ \ '__|______/ _ \ '_ \ / _` | | '_ \ / _ \
+ | | (_) | (_| | (_| |  __/ |        |  __/ | | | (_| | | | | |  __/
+ |_|\___/ \__,_|\__,_|\___|_|         \___|_| |_|\__, |_|_| |_|\___|
+                                                  __/ |             
+                                                 |___/              
+
+                A mod loader for the engine-sim project
+                   By ange-yaghi aka. AngeTheGreat
+
+        LUA DOCUMENTATION:
+
+            FUNCTIONS:
+
+                addProcessHandler(function)
+                    - Adds a handler for the process() function.
+
+                trace(message)
+                    - Logs the message in debug console in VS.
+                      Later will be used to debug stuff in a console window.
+
+            VARIABLES:
+                
+                (GET) means you can only get the value. Setting the value won't do anything.
+                (GET, SET) means you can get and set the value.
+                
+                INPUT_Q, INPUT_W ... INPUT_N, INPUT_M (GET)
+                    - Input values in format:
+                      "true" or "false" (string)
+
+                Engine_Name (GET)
+                    - Gets the engine name.
+
+                Engine_RPM (GET)
+                    - Gets the current engine RPM.
+
+                Engine_AFR (GET)
+                    - Gets the current engine A/F ratio.
+
+                Engine_Throttle (GET, SET)
+                    - Gets or sets the engine throttle.
+                      NOTE: throttle 1 means the throttle is closed and 0 means opened.
+
+                Engine_ManifoldPressure (GET, SET)
+                    - Gets or sets the current manifold pressure (in atmospheres).
+                      NOTE: set pressure is ADDED to the current pressure.
+
+               Simulator_FPS (GET)
+                    - Gets the current simulator FPS.
+
