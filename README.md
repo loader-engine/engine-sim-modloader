@@ -1,8 +1,8 @@
 # Engine Simulator Mod loader
-## Please read the full readme before complaining on discord
 ![Alt text](docs/public/loaderFullHD.png?raw=true)
 ---
 ## **Warning: project is in development and will change frequently**
+## Please read the full readme before complaining on discord
 ---
 
 ## What is this?
