@@ -47,23 +47,46 @@ void LoadSimulationCluster::initialize(EngineSimApplication *app) {
     m_dynoSpeedGauge->m_gauge->m_needleKd = 5.0f;
     m_dynoSpeedGauge->m_gauge->setBandCount(0);
 
-    m_torqueGauge = addElement<LabeledGauge>();
-    m_torqueGauge->m_title = "TORQUE";
-    m_torqueGauge->m_unit = "LB-FT";
-    m_torqueGauge->m_precision = 0;
-    m_torqueGauge->setLocalPosition({ 0, 0 });
-    m_torqueGauge->m_gauge->m_min = 0;
-    m_torqueGauge->m_gauge->m_max = 1000;
-    m_torqueGauge->m_gauge->m_minorStep = 50;
-    m_torqueGauge->m_gauge->m_majorStep = 100;
-    m_torqueGauge->m_gauge->m_maxMinorTick = INT_MAX;
-    m_torqueGauge->m_gauge->m_thetaMin = (float)constants::pi * 0.8f;
-    m_torqueGauge->m_gauge->m_thetaMax = (float)constants::pi * 0.2f;
-    m_torqueGauge->m_gauge->m_needleWidth = 4.0f;
-    m_torqueGauge->m_gauge->m_gamma = 1.0f;
-    m_torqueGauge->m_gauge->m_needleKs = 1000.0f;
-    m_torqueGauge->m_gauge->m_needleKd = 5.0f;
-    m_torqueGauge->m_gauge->setBandCount(0);
+    if (EngineSimApplication::instance->UNIT_TYPE_TORQUE == "metric")
+    {
+        m_torqueGauge = addElement<LabeledGauge>();
+        m_torqueGauge->m_title = "TORQUE";
+        m_torqueGauge->m_unit = "NM";
+        m_torqueGauge->m_precision = 0;
+        m_torqueGauge->setLocalPosition({ 0, 0 });
+        m_torqueGauge->m_gauge->m_min = 0;
+        m_torqueGauge->m_gauge->m_max = 1000;
+        m_torqueGauge->m_gauge->m_minorStep = 50;
+        m_torqueGauge->m_gauge->m_majorStep = 100;
+        m_torqueGauge->m_gauge->m_maxMinorTick = INT_MAX;
+        m_torqueGauge->m_gauge->m_thetaMin = (float)constants::pi * 0.8f;
+        m_torqueGauge->m_gauge->m_thetaMax = (float)constants::pi * 0.2f;
+        m_torqueGauge->m_gauge->m_needleWidth = 4.0f;
+        m_torqueGauge->m_gauge->m_gamma = 1.0f;
+        m_torqueGauge->m_gauge->m_needleKs = 1000.0f;
+        m_torqueGauge->m_gauge->m_needleKd = 5.0f;
+        m_torqueGauge->m_gauge->setBandCount(0);
+    }
+    else
+    {
+        m_torqueGauge = addElement<LabeledGauge>();
+        m_torqueGauge->m_title = "TORQUE";
+        m_torqueGauge->m_unit = "LB-FT";
+        m_torqueGauge->m_precision = 0;
+        m_torqueGauge->setLocalPosition({ 0, 0 });
+        m_torqueGauge->m_gauge->m_min = 0;
+        m_torqueGauge->m_gauge->m_max = 1355;
+        m_torqueGauge->m_gauge->m_minorStep = 50;
+        m_torqueGauge->m_gauge->m_majorStep = 100;
+        m_torqueGauge->m_gauge->m_maxMinorTick = INT_MAX;
+        m_torqueGauge->m_gauge->m_thetaMin = (float)constants::pi * 0.8f;
+        m_torqueGauge->m_gauge->m_thetaMax = (float)constants::pi * 0.2f;
+        m_torqueGauge->m_gauge->m_needleWidth = 4.0f;
+        m_torqueGauge->m_gauge->m_gamma = 1.0f;
+        m_torqueGauge->m_gauge->m_needleKs = 1000.0f;
+        m_torqueGauge->m_gauge->m_needleKd = 5.0f;
+        m_torqueGauge->m_gauge->setBandCount(0);
+    }
 
     m_hpGauge = addElement<LabeledGauge>();
     m_hpGauge->m_title = "HORSEPOWER";
@@ -129,9 +152,20 @@ void LoadSimulationCluster::update(float dt) {
     if (m_app->getEngine()->ProcessKeyDown(ysKey::Code::I)) {
         std::stringstream ss;
         ss << std::setprecision(0) << std::fixed;
-        ss << m_peakHorsepower << "HP @ " << m_peakHorsepowerRpm << "rpm"
-            << " | "
-            << m_peakTorque << "lb-ft @ " << m_peakTorqueRpm << "rpm";
+
+        if (EngineSimApplication::instance->UNIT_TYPE_TORQUE == "metric")
+        {
+            ss << m_peakHorsepower << "HP @ " << m_peakHorsepowerRpm << "rpm"
+                << " | "
+                << units::convert(m_peakTorque, units::Nm) << "Nm @ " << m_peakTorqueRpm << "rpm";
+        }
+        else
+        {
+            ss << m_peakHorsepower << "HP @ " << m_peakHorsepowerRpm << "rpm"
+                << " | "
+                << m_peakTorque << "lb-ft @ " << m_peakTorqueRpm << "rpm";
+        }
+
         m_app->getInfoCluster()->setLogMessage(ss.str());
     }
 
@@ -166,10 +200,20 @@ void LoadSimulationCluster::render() {
         { m_app->getRed(), (float)redline, (float)maxRpm, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 0);
 
     const Bounds torqueBounds = grid.get(m_bounds, 1, 1);
-    m_torqueGauge->m_gauge->m_value = m_simulator->m_dyno.m_enabled
-        ? (float)m_filteredTorque
-        : (float)m_peakTorque;
-    m_torqueGauge->m_bounds = torqueBounds;
+    if (EngineSimApplication::instance->UNIT_TYPE_TORQUE == "metric")
+    {
+        m_torqueGauge->m_gauge->m_value = m_simulator->m_dyno.m_enabled
+            ? (float)units::convert(m_filteredTorque, units::Nm)
+            : (float)units::convert(m_peakTorque, units::Nm);
+        m_torqueGauge->m_bounds = torqueBounds;
+    }
+    else
+    {
+        m_torqueGauge->m_gauge->m_value = m_simulator->m_dyno.m_enabled
+            ? (float)m_filteredTorque
+            : (float)m_peakTorque;
+        m_torqueGauge->m_bounds = torqueBounds;
+    }
 
     const Bounds horsepowerBounds = grid.get(m_bounds, 2, 1);
     m_hpGauge->m_gauge->m_value = m_simulator->m_dyno.m_enabled

@@ -7,7 +7,7 @@
 
 InfoCluster::InfoCluster() {
     m_engine = nullptr;
-    m_logMessage = "Started";
+    m_logMessage = "Started with " + EngineSimApplication::getModAmount() + " Mod(s)";
 }
 
 InfoCluster::~InfoCluster() {
@@ -59,8 +59,14 @@ void InfoCluster::render() {
         Bounds::tl,
         Bounds::tl);
     drawAlignedText(
-        "BUILD: v" + EngineSimApplication::getBuildVersion() + " // " __DATE__,
-        titleSplit.get(titleBounds, 0, 2).inset(10.0f).move({ 0.0f, 10.0f }),
+        "BUILD: v" + EngineSimApplication::getBuildVersion() + " | LOADER: v" + EngineSimApplication::getModLoaderVersion() + " // " __DATE__,
+        titleSplit.get(titleBounds, 0, 2).inset(10.0f).move({ 0.0f, 12.5f }),
+        16.0f,
+        Bounds::tl,
+        Bounds::tl);
+    drawAlignedText(
+        "MODS LOADED: " + EngineSimApplication::getModAmount(),
+        titleSplit.get(titleBounds, 0, 2).inset(10.0f).move({ 0.0f, -10.0f }),
         16.0f,
         Bounds::tl,
         Bounds::tl);

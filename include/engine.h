@@ -80,6 +80,12 @@ class Engine : public Part {
         CombustionChamber *getChamber(int i) const { return &m_combustionChambers[i]; }
         Fuel *getFuel() { return &m_fuel; }
 
+    public:
+        double press;
+        double flow;
+
+        void UpdateShit();
+
     protected:
         std::string m_name;
 

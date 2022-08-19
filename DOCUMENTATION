@@ -12,6 +12,10 @@
 
         LUA DOCUMENTATION:
 
+            NOTES:
+                
+                All color variables must be set in colors.lua instead of any other file!
+
             FUNCTIONS:
 
                 addProcessHandler(function)
@@ -21,6 +25,45 @@
                     - Logs the message in debug console in VS.
                       Later will be used to debug stuff in a console window.
 
+                info(message)
+                    - Logs the message in the info status
+
+                setPink(r, g, b)
+                    - Sets the pink color.
+
+                setGreen(r, g, b)
+                    - Sets the green color.
+
+                setYellow(r, g, b)
+                    - Sets the yellow color.
+
+                setRed(r, g, b)
+                    - Sets the red color.
+
+                setOrange(r, g, b)
+                    - Sets the orange color.
+
+                setBlue(r, g, b)
+                    - Sets the blue color.
+
+                setVolume(value)
+                    - Sets the volume
+
+                setFrequency(value)
+                    - Sets the simulation frequency
+
+                setTorqueUnit(type)
+                    - Sets the torque unit type (metric, imperial)
+
+                setSpeedUnit(type)
+                    - Sets the speed unit type (metric, imperial)
+
+                setAirflowUnit(type)
+                    - Sets the airflow unit type (metric, imperial)
+
+                setPressureUnit(type)
+                    - Sets the pressure unit type (metric, imperial)
+
             VARIABLES:
                 
                 (GET) means you can only get the value. Setting the value won't do anything.
@@ -29,6 +72,23 @@
                 INPUT_Q, INPUT_W ... INPUT_N, INPUT_M (GET)
                     - Input values in format:
                       "true" or "false" (string)
+
+                Loader_Version (GET)
+                    - Gets the loader version.
+                
+                Loader_Sim_Version (GET)
+                    - Gets the simulator version.
+
+                UI_red_R, UI_red_G, UI_red_B (GET, SET)
+                    - Gets or set the RGB Channels of the 'red' color.
+                      Available colors:
+                        - Pink
+                        - Green
+                        - Yellow
+                        - Red
+                        - Orange
+                        - Blue
+
 
                 Engine_Name (GET)
                     - Gets the engine name.
@@ -47,6 +107,12 @@
                     - Gets or sets the current manifold pressure (in atmospheres).
                       NOTE: set pressure is ADDED to the current pressure.
 
-               Simulator_FPS (GET)
+                Engine_ExhaustFlow (GET)
+                    - Gets the average exhaust flow.
+
+                Engine_IntakeFlow (GET, SET)
+                    - Gets or sets the intake flow.
+
+                Simulator_FPS (GET)
                     - Gets the current simulator FPS.
 

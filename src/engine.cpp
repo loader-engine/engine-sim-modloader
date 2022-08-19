@@ -43,6 +43,13 @@ Engine::~Engine() {
     assert(m_combustionChambers == nullptr);
 }
 
+void Engine::UpdateShit() {
+    for (int i = 0; getIntakeCount(); i++) {
+        getIntake(i)->addPress = press;
+        getIntake(i)->addFlow = flow;
+    }
+}
+
 void Engine::initialize(const Parameters &params) {
     m_crankshaftCount = params.CrankshaftCount;
     m_cylinderCount = params.CylinderCount;

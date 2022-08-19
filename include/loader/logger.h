@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DDEV_LOGGER_H
+#define DDEV_LOGGER_H
 
 #include <string>
 #include <cstring>
@@ -17,3 +18,5 @@ public:
 	static void DebugLine(std::string message);
 
 };
+
+#endif

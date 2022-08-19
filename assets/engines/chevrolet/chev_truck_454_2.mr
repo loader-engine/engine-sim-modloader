@@ -22,8 +22,7 @@ public node chev_truck_454 {
 
     engine engine(
         name: "Chev. 454 V8",
-        starter_torque: 300 * units.lb_ft,
-        starter_speed: 400 * units.rpm,
+        starter_torque: 200 * units.lb_ft,
         redline: 5500 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 3.0,
@@ -32,7 +31,7 @@ public node chev_truck_454 {
     )
 
     crankshaft c0(
-        throw: 2.4 * units.inch,
+        throw: 2.0 * units.inch,
         flywheel_mass: 29 * 2 * units.lb,
         mass: 75 * units.lb,
         friction_torque: 10.0 * units.lb_ft,
@@ -74,9 +73,9 @@ public node chev_truck_454 {
     )
 
     chevy_bbc_stock_intake intake(
-        carburetor_cfm: 750.0,
+        carburetor_cfm: 650.0,
         idle_flow_rate_cfm: 0.007,
-        idle_throttle_plate_position: 0.973,
+        idle_throttle_plate_position: 0.963,
         throttle_gamma: 1.5
     )
 
@@ -117,6 +116,14 @@ public node chev_truck_454 {
             exhaust_system: exhaust0,
             ignition_wire: wires.wire5
         )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.4)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire7
+        )
 
     cylinder_bank b1(bank_params, angle: 45.0 * units.deg)
     b1
@@ -144,6 +151,14 @@ public node chev_truck_454 {
             exhaust_system: exhaust1,
             ignition_wire: wires.wire6
         )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.6)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            intake: intake,
+            exhaust_system: exhaust1,
+            ignition_wire: wires.wire8
+        )
 
     engine
         .add_cylinder_bank(b0)
@@ -151,7 +166,7 @@ public node chev_truck_454 {
 
     engine.add_crankshaft(c0)
 
-    comp_cams_magnum_11_450_8 camshaft()
+    chevy_454_stock_camshaft camshaft()
 
     b0.set_cylinder_head (
         chevy_bbc_peanut_port_head(

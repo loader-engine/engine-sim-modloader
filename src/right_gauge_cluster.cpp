@@ -67,49 +67,103 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
     m_tachometer->m_gauge->setBand(
         { m_app->getRed(), 5500, 7000, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-    m_speedometer->m_title = "VEHICLE SPEED";
-    m_speedometer->m_unit = "MPH";
-    m_speedometer->m_precision = 0;
-    m_speedometer->setLocalPosition({ 0, 0 });
-    m_speedometer->m_gauge->m_min = 0;
-    m_speedometer->m_gauge->m_max = 200;
-    m_speedometer->m_gauge->m_minorStep = 5;
-    m_speedometer->m_gauge->m_majorStep = 10;
-    m_speedometer->m_gauge->m_maxMinorTick = 200;
-    m_speedometer->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
-    m_speedometer->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
-    m_speedometer->m_gauge->m_needleWidth = 4.0f;
-    m_speedometer->m_gauge->m_gamma = 1.0f;
-    m_speedometer->m_gauge->m_needleKs = 1000.0f;
-    m_speedometer->m_gauge->m_needleKd = 20.0f;
-    m_speedometer->m_gauge->setBandCount(0);
+    if (EngineSimApplication::instance->UNIT_TYPE_SPEED == "metric")
+    {
+        m_speedometer->m_title = "VEHICLE SPEED";
+        m_speedometer->m_unit = "KPH";
+        m_speedometer->m_precision = 0;
+        m_speedometer->setLocalPosition({ 0, 0 });
+        m_speedometer->m_gauge->m_min = 0;
+        m_speedometer->m_gauge->m_max = 321;
+        m_speedometer->m_gauge->m_minorStep = 5;
+        m_speedometer->m_gauge->m_majorStep = 10;
+        m_speedometer->m_gauge->m_maxMinorTick = 200;
+        m_speedometer->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_speedometer->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_speedometer->m_gauge->m_needleWidth = 4.0f;
+        m_speedometer->m_gauge->m_gamma = 1.0f;
+        m_speedometer->m_gauge->m_needleKs = 1000.0f;
+        m_speedometer->m_gauge->m_needleKd = 20.0f;
+        m_speedometer->m_gauge->setBandCount(0);
+    }
+    else
+    {
+        m_speedometer->m_title = "VEHICLE SPEED";
+        m_speedometer->m_unit = "MPH";
+        m_speedometer->m_precision = 0;
+        m_speedometer->setLocalPosition({ 0, 0 });
+        m_speedometer->m_gauge->m_min = 0;
+        m_speedometer->m_gauge->m_max = 200;
+        m_speedometer->m_gauge->m_minorStep = 5;
+        m_speedometer->m_gauge->m_majorStep = 10;
+        m_speedometer->m_gauge->m_maxMinorTick = 200;
+        m_speedometer->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_speedometer->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_speedometer->m_gauge->m_needleWidth = 4.0f;
+        m_speedometer->m_gauge->m_gamma = 1.0f;
+        m_speedometer->m_gauge->m_needleKs = 1000.0f;
+        m_speedometer->m_gauge->m_needleKd = 20.0f;
+        m_speedometer->m_gauge->setBandCount(0);
+    }
 
-    m_manifoldVacuumGauge->m_title = "MANIFOLD PRESSURE";
-    m_manifoldVacuumGauge->m_unit = "inHg";
-    m_manifoldVacuumGauge->m_precision = 0;
-    m_manifoldVacuumGauge->setLocalPosition({ 0, 0 });
-    m_manifoldVacuumGauge->m_gauge->m_min = -30;
-    m_manifoldVacuumGauge->m_gauge->m_max = 5;
-    m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
-    m_manifoldVacuumGauge->m_gauge->m_majorStep = 5;
-    m_manifoldVacuumGauge->m_gauge->m_maxMinorTick = 200;
-    m_manifoldVacuumGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
-    m_manifoldVacuumGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
-    m_manifoldVacuumGauge->m_gauge->m_needleWidth = 4.0f;
-    m_manifoldVacuumGauge->m_gauge->m_gamma = 1.0f;
-    m_manifoldVacuumGauge->m_gauge->m_needleKs = 1000.0f;
-    m_manifoldVacuumGauge->m_gauge->m_needleKd = 50.0f;
-    m_manifoldVacuumGauge->m_gauge->setBandCount(5);
-    m_manifoldVacuumGauge->m_gauge->setBand(
-        { m_app->getRed(), -5, -1, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
-    m_manifoldVacuumGauge->m_gauge->setBand(
-        { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-    m_manifoldVacuumGauge->m_gauge->setBand(
-        { m_app->getOrange(), -10, -5, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
-    m_manifoldVacuumGauge->m_gauge->setBand(
-        { m_app->getBlue(), -22, -10, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
-    m_manifoldVacuumGauge->m_gauge->setBand(
-        { m_app->getWhite(), -30, -22, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
+    if (EngineSimApplication::instance->UNIT_TYPE_PRESSURE == "metric")
+    {
+        m_manifoldVacuumGauge->m_title = "MANIFOLD PRESSURE";
+        m_manifoldVacuumGauge->m_unit = "Bar";
+        m_manifoldVacuumGauge->m_precision = 2;
+        m_manifoldVacuumGauge->setLocalPosition({ 0, 0 });
+        m_manifoldVacuumGauge->m_gauge->m_min = -1;
+        m_manifoldVacuumGauge->m_gauge->m_max = 0;
+        m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
+        m_manifoldVacuumGauge->m_gauge->m_majorStep = 5;
+        m_manifoldVacuumGauge->m_gauge->m_maxMinorTick = 200;
+        m_manifoldVacuumGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_manifoldVacuumGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_manifoldVacuumGauge->m_gauge->m_needleWidth = 4.0f;
+        m_manifoldVacuumGauge->m_gauge->m_gamma = 1.0f;
+        m_manifoldVacuumGauge->m_gauge->m_needleKs = 1000.0f;
+        m_manifoldVacuumGauge->m_gauge->m_needleKd = 50.0f;
+        m_manifoldVacuumGauge->m_gauge->setBandCount(5);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getRed(), -0.34f, -0.03f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getWhite(), -0.03f, 0.03f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getOrange(), -0.34f, -0.17f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getBlue(), -0.75f, -0.34f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getWhite(), -1, -0.75f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
+    }
+    else
+    {
+        m_manifoldVacuumGauge->m_title = "MANIFOLD PRESSURE";
+        m_manifoldVacuumGauge->m_unit = "inHg";
+        m_manifoldVacuumGauge->m_precision = 0;
+        m_manifoldVacuumGauge->setLocalPosition({ 0, 0 });
+        m_manifoldVacuumGauge->m_gauge->m_min = -30;
+        m_manifoldVacuumGauge->m_gauge->m_max = 5;
+        m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
+        m_manifoldVacuumGauge->m_gauge->m_majorStep = 5;
+        m_manifoldVacuumGauge->m_gauge->m_maxMinorTick = 200;
+        m_manifoldVacuumGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_manifoldVacuumGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_manifoldVacuumGauge->m_gauge->m_needleWidth = 4.0f;
+        m_manifoldVacuumGauge->m_gauge->m_gamma = 1.0f;
+        m_manifoldVacuumGauge->m_gauge->m_needleKs = 1000.0f;
+        m_manifoldVacuumGauge->m_gauge->m_needleKd = 50.0f;
+        m_manifoldVacuumGauge->m_gauge->setBandCount(5);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getRed(), -5, -1, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getOrange(), -10, -5, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getBlue(), -22, -10, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
+        m_manifoldVacuumGauge->m_gauge->setBand(
+            { m_app->getWhite(), -30, -22, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
+    }
 
     m_volumetricEffGauge->m_title = "VOLUMETRIC EFF.";
     m_volumetricEffGauge->m_unit = "%";
@@ -135,22 +189,46 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
     m_volumetricEffGauge->m_gauge->setBand(
         { m_app->getRed(), 100, 120, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-    m_intakeCfmGauge->m_title = "AIR SCFM";
-    m_intakeCfmGauge->m_unit = "";
-    m_intakeCfmGauge->m_precision = 1;
-    m_intakeCfmGauge->setLocalPosition({ 0, 0 });
-    m_intakeCfmGauge->m_gauge->m_min = 0;
-    m_intakeCfmGauge->m_gauge->m_max = 1200;
-    m_intakeCfmGauge->m_gauge->m_minorStep = 20;
-    m_intakeCfmGauge->m_gauge->m_majorStep = 100;
-    m_intakeCfmGauge->m_gauge->m_maxMinorTick = 1200;
-    m_intakeCfmGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
-    m_intakeCfmGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
-    m_intakeCfmGauge->m_gauge->m_needleWidth = 4.0f;
-    m_intakeCfmGauge->m_gauge->m_gamma = 1.0f;
-    m_intakeCfmGauge->m_gauge->m_needleKs = 1000.0f;
-    m_intakeCfmGauge->m_gauge->m_needleKd = 50.0f;
-    m_intakeCfmGauge->m_gauge->setBandCount(0);
+    if (EngineSimApplication::instance->UNIT_TYPE_AIRFLOW == "metric")
+    {
+        m_intakeCfmGauge->m_title = "AIR M3/MIN";
+        m_intakeCfmGauge->m_unit = "";
+        m_intakeCfmGauge->m_precision = 1;
+        m_intakeCfmGauge->setLocalPosition({ 0, 0 });
+        m_intakeCfmGauge->m_gauge->m_min = 0;
+        m_intakeCfmGauge->m_gauge->m_max = 34;
+        m_intakeCfmGauge->m_gauge->m_minorStep = 1;
+        m_intakeCfmGauge->m_gauge->m_majorStep = 10;
+        m_intakeCfmGauge->m_gauge->m_maxMinorTick = 1200;
+        m_intakeCfmGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_intakeCfmGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_intakeCfmGauge->m_gauge->m_needleWidth = 4.0f;
+        m_intakeCfmGauge->m_gauge->m_gamma = 1.0f;
+        m_intakeCfmGauge->m_gauge->m_needleKs = 1000.0f;
+        m_intakeCfmGauge->m_gauge->m_needleKd = 50.0f;
+        m_intakeCfmGauge->m_gauge->setBandCount(1);
+        m_intakeCfmGauge->m_gauge->setBand(
+            { m_app->getWhite(), 0, 34, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
+    }
+    else
+    {
+        m_intakeCfmGauge->m_title = "AIR SCFM";
+        m_intakeCfmGauge->m_unit = "";
+        m_intakeCfmGauge->m_precision = 1;
+        m_intakeCfmGauge->setLocalPosition({ 0, 0 });
+        m_intakeCfmGauge->m_gauge->m_min = 0;
+        m_intakeCfmGauge->m_gauge->m_max = 1200;
+        m_intakeCfmGauge->m_gauge->m_minorStep = 20;
+        m_intakeCfmGauge->m_gauge->m_majorStep = 100;
+        m_intakeCfmGauge->m_gauge->m_maxMinorTick = 1200;
+        m_intakeCfmGauge->m_gauge->m_thetaMin = (float)constants::pi * 1.2f;
+        m_intakeCfmGauge->m_gauge->m_thetaMax = -(float)constants::pi * 0.2f;
+        m_intakeCfmGauge->m_gauge->m_needleWidth = 4.0f;
+        m_intakeCfmGauge->m_gauge->m_gamma = 1.0f;
+        m_intakeCfmGauge->m_gauge->m_needleKs = 1000.0f;
+        m_intakeCfmGauge->m_gauge->m_needleKd = 50.0f;
+        m_intakeCfmGauge->m_gauge->setBandCount(0);
+    }
 }
 
 void RightGaugeCluster::destroy() {
@@ -207,11 +285,21 @@ void RightGaugeCluster::renderTachSpeedCluster(const Bounds &bounds) {
     m_tachometer->m_gauge->setBand(
         { m_app->getRed(), redline, maxRpm, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-    const Bounds speed = left.verticalSplit(0.0f, 0.5f);
-    m_speedometer->m_bounds = speed;
-    m_speedometer->m_gauge->m_value =
-        (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::mile / units::hour);
+    if (EngineSimApplication::instance->UNIT_TYPE_SPEED == "metric")
+    {
+        const Bounds speed = left.verticalSplit(0.0f, 0.5f);
+        m_speedometer->m_bounds = speed;
+        m_speedometer->m_gauge->m_value =
+            (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::km / units::hour);
+    }
+    else
+    {
+        const Bounds speed = left.verticalSplit(0.0f, 0.5f);
+        m_speedometer->m_bounds = speed;
+        m_speedometer->m_gauge->m_value =
+            (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::mile / units::hour);
 
+    }
     m_combusionChamberStatus->m_bounds = right;
 }
 
@@ -236,11 +324,22 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
     const Bounds manifoldVacuum = grid.get(right, 0, 0, 1, 1);
     m_manifoldVacuumGauge->m_bounds = manifoldVacuum;
 
-    const double vacuumReading =
-        units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::inHg);
-    m_manifoldVacuumGauge->m_gauge->m_value = (vacuumReading > -0.5)
-        ? 0.0f
-        : (float)vacuumReading;
+    if (EngineSimApplication::instance->UNIT_TYPE_PRESSURE == "metric")
+    {
+        const double vacuumReading =
+            units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::inHg) * 0.034f;
+        m_manifoldVacuumGauge->m_gauge->m_value = (vacuumReading > -0.5)
+            ? 0.0f
+            : (float)vacuumReading;
+    }
+    else
+    {
+        const double vacuumReading =
+            units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::inHg);
+        m_manifoldVacuumGauge->m_gauge->m_value = (vacuumReading > -0.5)
+            ? 0.0f
+            : (float)vacuumReading;
+    }
 
     const double rpm = std::fmax(m_engine->getRpm(), 0.0);
     const double theoreticalAirPerRevolution =
@@ -252,10 +351,20 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
         ? 0.0
         : (actualAirPerSecond / theoreticalAirPerSecond);
 
-    const Bounds cfmBounds = grid.get(right, 0, 1, 1, 1);
-    m_intakeCfmGauge->m_bounds = cfmBounds;
-    m_intakeCfmGauge->m_gauge->m_value =
-        (float)units::convert(actualAirPerSecond, units::scfm);
+    if (EngineSimApplication::instance->UNIT_TYPE_AIRFLOW == "metric")
+    {
+        const Bounds cfmBounds = grid.get(right, 0, 1, 1, 1);
+        m_intakeCfmGauge->m_bounds = cfmBounds;
+        m_intakeCfmGauge->m_gauge->m_value =
+            (float)units::convert(actualAirPerSecond, units::scfm) * 0.028f;
+    }
+    else
+    {
+        const Bounds cfmBounds = grid.get(right, 0, 1, 1, 1);
+        m_intakeCfmGauge->m_bounds = cfmBounds;
+        m_intakeCfmGauge->m_gauge->m_value =
+            (float)units::convert(actualAirPerSecond, units::scfm);
+    }
 
     const Bounds volumetricEfficiencyBounds = grid.get(right, 0, 2, 1, 1);
     m_volumetricEffGauge->m_bounds = volumetricEfficiencyBounds;

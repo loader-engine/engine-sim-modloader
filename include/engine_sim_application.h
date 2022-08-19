@@ -26,6 +26,10 @@
 
 #include <vector>
 
+#include "./loader/loader.h"
+
+#include <filesystem>
+
 #include "./lua/lua.hpp"
 #include "./loader/logger.h"
 
@@ -33,13 +37,16 @@ class EngineSimApplication {
     private:
         static std::string s_buildVersion;
         static std::string s_modLoaderVersion;
+        static int s_modAmount;
 
     public:
         EngineSimApplication();
         virtual ~EngineSimApplication();
+        static EngineSimApplication* instance;
 
         static std::string getBuildVersion() { return s_buildVersion; }
         static std::string getModLoaderVersion() { return s_modLoaderVersion; }
+        static std::string getModAmount() { return std::to_string(s_modAmount); }
 
         void initialize(void *instance, ysContextObject::DeviceAPI api);
         void run();
@@ -76,6 +83,13 @@ class EngineSimApplication {
         ysVector getOrange() const { return m_orange; }
         ysVector getBlue() const { return m_blue; }
 
+        void SetPink(double R, double G, double B);
+        void SetGreen(double R, double G, double B);
+        void SetYellow(double R, double G, double B);
+        void SetRed(double R, double G, double B);
+        void SetOrange(double R, double G, double B);
+        void SetBlue(double R, double G, double B);
+
         const SimulationObject::ViewParameters &getViewParameters() const;
         void setViewLayer(int view) { m_viewParameters.Layer0 = view; }
 
@@ -87,6 +101,11 @@ class EngineSimApplication {
         Simulator *getSimulator() { return &m_simulator; }
         InfoCluster *getInfoCluster() { return m_infoCluster; }
 
+        std::string UNIT_TYPE_TORQUE = "imperial";
+        std::string UNIT_TYPE_SPEED = "imperial";
+        std::string UNIT_TYPE_AIRFLOW = "imperial";
+        std::string UNIT_TYPE_PRESSURE = "imperial";
+
     protected:
         void renderScene();
 
@@ -95,23 +114,69 @@ class EngineSimApplication {
         virtual void process(float dt);
         virtual void render();
 
+        // LUA
+
+        // 243, 148, 190
+        double PinkR = 243;
+        double PinkG = 148;
+        double PinkB = 190;
+
+        // 189, 216, 105
+        double GreenR = 189;
+        double GreenG = 216;
+        double GreenB = 105;
+
+        // 253, 189, 46
+        double YellowR = 253;
+        double YellowG = 189;
+        double YellowB = 46;
+
+        // 238, 68, 69
+        double RedR = 238;
+        double RedG = 68;
+        double RedB = 69;
+
+        // 244, 128, 42
+        double OrangeR = 244;
+        double OrangeG = 128;
+        double OrangeB = 42;
+
+        // 119, 206, 224
+        double BlueR = 119;
+        double BlueG = 206;
+        double BlueB = 224;
+
         // LUA STUFF
         void loadLua(std::string luaPath);
+        void luaLoadConfig(std::string luaPath);
         void unloadLua();
         void luaFail(std::string error);
         lua_State* L;
 
+        /*
+        int luaSetPink(lua_State* lua);
+        int luaSetGreen(lua_State* lua);
+        int luaSetYellow(lua_State* lua);
+        int luaSetRed(lua_State* lua);
+        int luaSetOrange(lua_State* lua);
+        int luaSetBlue(lua_State* lua);
+        */
+
         void luaSetupVars();
         void luaSetInVar(ysKey::Code code, std::string* name);
 
-        void luaSetupEngineVars();
+        void luaSetupEngineVars(bool start);
         void luaSetVar(std::string name, std::string value);
 
         void luaGetEngineVars();
+        void luaGetUiVars();
+        //void luaSetUiVar(std::string color);
         std::string luaGetVar(std::string name);
 
         // LUA FUNCTIONS
         void luaProcess(float dt);
+
+        void luaStart();
 
         float m_displayHeight;
         int m_gameWindowHeight;
@@ -120,6 +185,8 @@ class EngineSimApplication {
 
         dbasic::ShaderSet m_shaderSet;
         Shaders m_shaders;
+
+    public:
 
         dbasic::DeltaEngine m_engine;
         dbasic::AssetManager m_assetManager;

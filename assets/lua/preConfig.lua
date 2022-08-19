@@ -1,0 +1,11 @@
+setPink(255,50,128)
+setGreen(0,255,0)
+setYellow(255,255,0)
+setRed(255,0,0)
+setOrange(255,128,0)
+setBlue(0,0,255)
+
+setTorqueUnit("metric")
+setSpeedUnit("metric")
+setAirflowUnit("metric")
+setPressureUnit("metric")

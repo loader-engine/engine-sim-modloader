@@ -20,16 +20,35 @@
 #include <stdlib.h>
 #include <sstream>
 
-#include <filesystem>
-
 
 #if ATG_ENGINE_DISCORD_ENABLED
 #include "../discord/Discord.h"
 #endif
 
 std::string EngineSimApplication::s_buildVersion = "0.1.7a";
-std::string EngineSimApplication::s_modLoaderVersion = "0.0.1a";
+std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
+int EngineSimApplication::s_modAmount = 0;
+EngineSimApplication* EngineSimApplication::instance = nullptr;
+std::string luaScriptsPath = "../assets/lua";
 
+void EngineSimApplication::SetPink(double R, double G, double B) {
+    m_pink = ysColor::srgbiToLinear(R, G, B);
+}
+void EngineSimApplication::SetGreen(double R, double G, double B) {
+    m_green = ysColor::srgbiToLinear(R, G, B);
+}
+void EngineSimApplication::SetYellow(double R, double G, double B) {
+    m_yellow = ysColor::srgbiToLinear(R, G, B);
+}
+void EngineSimApplication::SetRed(double R, double G, double B) {
+    m_red = ysColor::srgbiToLinear(R, G, B);
+}
+void EngineSimApplication::SetOrange(double R, double G, double B) {
+    m_orange = ysColor::srgbiToLinear(R, G, B);
+}
+void EngineSimApplication::SetBlue(double R, double G, double B) {
+    m_blue = ysColor::srgbiToLinear(R, G, B);
+}
 
 EngineSimApplication::EngineSimApplication() {
     m_assetPath = "";
@@ -82,291 +101,12 @@ EngineSimApplication::EngineSimApplication() {
     m_screen = 0;
     m_viewParameters.Layer0 = 0;
     m_viewParameters.Layer1 = 0;
-}
 
-namespace fs = std::filesystem;
+    instance = this;
+}
 
 EngineSimApplication::~EngineSimApplication() {
     /* void */
-}
-
-
-static int luaTrace(lua_State* lua)
-{
-    assert(lua_isstring(lua, 1));
-
-    const char* msg = lua_tostring(lua, 1);
-    std::string str(msg);
-
-    // debug output
-    Logger::DebugLine("script: " + str);
-
-    return 0;
-}
-
-int handlers[100];
-
-int numHandlers = 0;
-
-static int addInputHandler(lua_State* L) {
-    if (!lua_isfunction(L, 1)) {
-        luaL_argerror(L, 1, "expected function");
-    } 
-    lua_pushvalue(L, -1);
-    handlers[numHandlers++] = luaL_ref(L, LUA_REGISTRYINDEX);
-    Logger::DebugLine("added handler for processing");
-
-    return 0;
-}
-
-void EngineSimApplication::luaProcess(float dt) {
-    
-    luaSetupVars();
-    luaSetupEngineVars();
-
-    int i;
-    for (i = 0; i < numHandlers; ++i) {
-        lua_rawgeti(L, LUA_REGISTRYINDEX, handlers[i]);
-        lua_pcall(L, 0, 0, 0);
-    }
-}
-
-void EngineSimApplication::luaSetupVars() {
-    std::string s = "INPUT_Q";
-
-    s = "INPUT_1";
-    luaSetInVar(ysKey::Code::N1, &s);
-
-    s = "INPUT_2";
-    luaSetInVar(ysKey::Code::N2, &s);
-
-    s = "INPUT_3";
-    luaSetInVar(ysKey::Code::N3, &s);
-
-    s = "INPUT_4";
-    luaSetInVar(ysKey::Code::N4, &s);
-
-    s = "INPUT_5";
-    luaSetInVar(ysKey::Code::N5, &s);
-
-    s = "INPUT_6";
-    luaSetInVar(ysKey::Code::N6, &s);
-
-    s = "INPUT_7";
-    luaSetInVar(ysKey::Code::N7, &s);
-
-    s = "INPUT_8";
-    luaSetInVar(ysKey::Code::N8, &s);
-
-    s = "INPUT_9";
-    luaSetInVar(ysKey::Code::N9, &s);
-
-    s = "INPUT_0";
-    luaSetInVar(ysKey::Code::N0, &s);
-
-
-    s = "INPUT_Q";
-    luaSetInVar(ysKey::Code::Q, &s);
-
-    s = "INPUT_W";
-    luaSetInVar(ysKey::Code::W, &s);
-
-    s = "INPUT_E";
-    luaSetInVar(ysKey::Code::E, &s);
-
-    s = "INPUT_R";
-    luaSetInVar(ysKey::Code::R, &s);
-
-    s = "INPUT_T";
-    luaSetInVar(ysKey::Code::T, &s);
-
-    s = "INPUT_Y";
-    luaSetInVar(ysKey::Code::Y, &s);
-
-    s = "INPUT_U";
-    luaSetInVar(ysKey::Code::U, &s);
-
-    s = "INPUT_I";
-    luaSetInVar(ysKey::Code::I, &s);
-
-    s = "INPUT_O";
-    luaSetInVar(ysKey::Code::O, &s);
-
-    s = "INPUT_P";
-    luaSetInVar(ysKey::Code::P, & s);
-
-
-    s = "INPUT_A";
-    luaSetInVar(ysKey::Code::A, &s);
-
-    s = "INPUT_S";
-    luaSetInVar(ysKey::Code::S, &s);
-
-    s = "INPUT_D";
-    luaSetInVar(ysKey::Code::D, &s);
-
-    s = "INPUT_F";
-    luaSetInVar(ysKey::Code::F, &s);
-
-    s = "INPUT_G";
-    luaSetInVar(ysKey::Code::G, &s);
-
-    s = "INPUT_H";
-    luaSetInVar(ysKey::Code::H, &s);
-
-    s = "INPUT_J";
-    luaSetInVar(ysKey::Code::J, &s);
-
-    s = "INPUT_K";
-    luaSetInVar(ysKey::Code::K, &s);
-
-    s = "INPUT_L";
-    luaSetInVar(ysKey::Code::L, &s);
-
-
-    s = "INPUT_Z";
-    luaSetInVar(ysKey::Code::Z, &s);
-
-    s = "INPUT_X";
-    luaSetInVar(ysKey::Code::X, &s);
-
-    s = "INPUT_C";
-    luaSetInVar(ysKey::Code::C, &s);
-
-    s = "INPUT_V";
-    luaSetInVar(ysKey::Code::V, &s);
-
-    s = "INPUT_B";
-    luaSetInVar(ysKey::Code::B, &s);
-
-    s = "INPUT_N";
-    luaSetInVar(ysKey::Code::N, &s);
-
-    s = "INPUT_M";
-    luaSetInVar(ysKey::Code::M, &s);
-}
-
-void EngineSimApplication::luaSetInVar(ysKey::Code code, std::string* name) {
-    const int len = name->length();
-    char* nameChar = (char*)malloc(len + 1);
-    strcpy(nameChar, name->c_str());
-
-    if(m_engine.IsKeyDown(code))
-        lua_pushstring(L, "true");
-    else
-        lua_pushstring(L, "false");
-
-    lua_setglobal(L, nameChar);
-
-    free(nameChar);
-}
-
-void EngineSimApplication::luaSetupEngineVars() {
-    
-    Engine* engine = m_simulator.getEngine();
-    luaSetVar("Engine_Name", engine->getName());
-    
-    luaSetVar("Engine_RPM", std::to_string(engine->getRpm()));
-    luaSetVar("Engine_AFR", std::to_string(engine->getIntakeAfr()));
-    luaSetVar("Engine_Throttle", std::to_string(engine->getThrottle()));
-    luaSetVar("Engine_ManifoldPressure", std::to_string(engine->getManifoldPressure()));
-
-    luaSetVar("Simulator_FPS", std::to_string(m_engine.GetAverageFramerate()));
-
-    //free(engine);
-}
-
-void EngineSimApplication::luaGetEngineVars() {
-    std::string result = "";
-    Engine* engine = m_simulator.getEngine();
-
-    result = luaGetVar("Engine_Throttle");
-    int throt = std::stoi(result);
-    engine->setThrottle(throt);
-
-    result = luaGetVar("Engine_ManifoldPressure");
-    int press = std::stoi(result);
-    for (int i = 0; engine->getIntakeCount(); i++)
-        engine->getIntake(i)->addPress = press;
-
-    //free(engine);
-}
-
-std::string EngineSimApplication::luaGetVar(std::string name) {
-    const int len = name.length();
-    char* nameChar = (char*)malloc(len + 1);
-    strcpy(nameChar, name.c_str());
-
-    lua_getglobal(L, nameChar);
-    int top = lua_gettop(L);
-    std::string str = lua_tostring(L, top);
-    lua_pop(L, top);
-
-    free(nameChar);
-
-    return str;
-}
-
-void EngineSimApplication::luaSetVar(std::string name, std::string value) {
-    const int len = name.length();
-    char* nameChar = (char*)malloc(len + 1);
-    strcpy(nameChar, name.c_str());
-
-    const int len2 = value.length();
-    char* valChar = (char*)malloc(len2 + 1);
-    strcpy(valChar, value.c_str());
-
-    lua_pushstring(L, valChar);
-
-    lua_setglobal(L, nameChar);
-
-    free(nameChar);
-    free(valChar);
-}
-
-void EngineSimApplication::loadLua(std::string luaPath) {
-    char buff[256];
-    int error;
-    L = luaL_newstate();
-    luaL_openlibs(L);
-    //luaL_dostring(L, "json = dofile('json.lua')");
-
-    
-    Logger::DebugLine("===============================================================");
-    Logger::DebugLine("===============================================================");
-    Logger::DebugLine("=======================loader-engine===========================");
-    Logger::DebugLine("==========================loading==============================");
-    Logger::DebugLine("===============================================================");
-    Logger::DebugLine("===============================================================");
-
-    Logger::DebugLine("Setting up lua functions");
-    lua_pushcclosure(L, luaTrace, 0);
-    lua_setglobal(L, "trace");
-    lua_pushcclosure(L, addInputHandler, 0);
-    lua_setglobal(L, "addProcessHandler");
-    
-    Logger::DebugLine("Loading files...");
-
-    for (const auto& entry : fs::directory_iterator(luaPath)) {
-        std::string path = entry.path().string();
-        Logger::DebugLine("Loading file: " + path);
-        const int len = path.length();
-        char* pathChar = (char*)malloc(len + 1);
-        strcpy(pathChar, path.c_str());
-        //luaL_loadfile(L, pathChar);
-        luaL_dofile(L, pathChar);
-        free(pathChar);
-    }
-
-    Logger::DebugLine("Loaded!");
-}
-
-void EngineSimApplication::luaFail(std::string error) {
-    Logger::DebugLine(error);
-}
-
-void EngineSimApplication::unloadLua() {
-    lua_close(L);
 }
 
 void EngineSimApplication::initialize(void *instance, ysContextObject::DeviceAPI api) {
@@ -386,14 +126,14 @@ void EngineSimApplication::initialize(void *instance, ysContextObject::DeviceAPI
         confFile.close();
     }
 
-    std::string luaScriptsPath = "../assets/lua";
-
     loadLua(luaScriptsPath);
 
     m_engine.GetConsole()->SetDefaultFontDirectory(enginePath + "/fonts/");
 
+    luaStart();
+
     const std::string shaderPath = enginePath + "/shaders/";
-    std::string winTitle = "Engine Sim | AngeTheGreat | v" + s_buildVersion + " | modLoader v" + s_modLoaderVersion;
+    std::string winTitle = "Engine Sim | AngeTheGreat & DDev | v" + s_buildVersion + " | modLoader v" + s_modLoaderVersion;
     dbasic::DeltaEngine::GameEngineSettings settings;
     settings.API = api;
     settings.DepthBuffer = false;
@@ -461,6 +201,7 @@ void EngineSimApplication::initialize() {
     }
     else {
         m_iceEngine = nullptr;
+        MessageBox(NULL, "Compiler failed to compile main.mr file!", NULL, MB_OK);
     }
 
     compiler.destroy();
@@ -562,8 +303,10 @@ void EngineSimApplication::initialize() {
     //Enable it, this needs to be set via a config file of some sort. 
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
-    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName(), s_buildVersion + " | " + s_modLoaderVersion);
+    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " Mods loaded: " + getModAmount(), s_buildVersion + " | " + s_modLoaderVersion);
 #endif
+
+    luaLoadConfig(luaScriptsPath);
 
 }
 
@@ -694,8 +437,6 @@ void EngineSimApplication::run() {
         const float dt = m_engine.GetFrameLength();
         const bool fineControlMode = m_engine.IsKeyDown(ysKey::Code::Space);
 
-        luaProcess(dt);
-
         const int mouseWheel = m_engine.GetMouseWheel();
         const int mouseWheelDelta = mouseWheel - lastMouseWheel;
         lastMouseWheel = mouseWheel;
@@ -710,6 +451,8 @@ void EngineSimApplication::run() {
 
         m_engine.StartFrame();
         if (!m_engine.IsOpen()) break;
+
+        luaProcess(dt);
 
         updateScreenSizeStability();
 
