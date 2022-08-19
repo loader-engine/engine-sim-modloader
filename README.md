@@ -1,6 +1,6 @@
 # Engine Simulator Mod loader
 ## Please read the full readme before complaining on discord
-![Alt text](docs/public/screenshot_v01.png?raw=true)
+![Alt text](docs/public/loader.png?raw=true)
 ---
 ## **Warning: project is in development and will change frequently**
 ---
