@@ -480,7 +480,7 @@ void EngineSimApplication::luaGetEngineVars() {
     double flow = std::stod(result);
     engine->flow = flow;
     //Logger::DebugLine("setting intake flow: " + result);
-
+    
     //double res[5] = {};
     //result = luaGetVar("Engine_Gear1");
     //res[0] = std::stod(result);
