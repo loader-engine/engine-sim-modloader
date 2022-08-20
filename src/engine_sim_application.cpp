@@ -303,7 +303,7 @@ void EngineSimApplication::initialize() {
     //Enable it, this needs to be set via a config file of some sort. 
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
-    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " Mods loaded: " + getModAmount(), s_buildVersion + " | " + s_modLoaderVersion);
+    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
 #endif
 
     luaLoadConfig(luaScriptsPath);
