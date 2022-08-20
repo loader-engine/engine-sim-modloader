@@ -25,11 +25,15 @@
 #include "../discord/Discord.h"
 #endif
 
+<<<<<<< HEAD
 std::string EngineSimApplication::s_buildVersion = "0.1.7a";
 std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
+=======
+std::string EngineSimApplication::s_buildVersion = "0.1.8a";
+>>>>>>> d046744862b1e8f167b4dd093f5e013f55e1bda2
 
 void EngineSimApplication::SetPink(double R, double G, double B) {
     m_pink = ysColor::srgbiToLinear(R, G, B);
@@ -351,16 +355,15 @@ void EngineSimApplication::process(float frame_dt) {
             (duration.count() / 1E9) / iterationCount);
     }
 
-    const SampleOffset currentAudioPosition = m_audioSource->GetCurrentPosition();
     const SampleOffset safeWritePosition = m_audioSource->GetCurrentWritePosition();
     const SampleOffset writePosition = m_audioBuffer.m_writePointer;
 
     SampleOffset targetWritePosition =
-        m_audioBuffer.getBufferIndex(currentAudioPosition, (int)(44100 * 0.1));
+        m_audioBuffer.getBufferIndex(safeWritePosition, (int)(44100 * 0.1));
     SampleOffset maxWrite = m_audioBuffer.offsetDelta(writePosition, targetWritePosition);
 
-    SampleOffset currentLead = m_audioBuffer.offsetDelta(currentAudioPosition, writePosition);
-    SampleOffset newLead = m_audioBuffer.offsetDelta(currentAudioPosition, targetWritePosition);
+    SampleOffset currentLead = m_audioBuffer.offsetDelta(safeWritePosition, writePosition);
+    SampleOffset newLead = m_audioBuffer.offsetDelta(safeWritePosition, targetWritePosition);
 
     if (currentLead > newLead) {
         maxWrite = 0;
@@ -402,7 +405,7 @@ void EngineSimApplication::process(float frame_dt) {
     }
 
     m_performanceCluster->addAudioLatencySample(
-        m_audioBuffer.offsetDelta(m_audioSource->GetCurrentPosition(), m_audioBuffer.m_writePointer) / (44100 * 0.1));
+        m_audioBuffer.offsetDelta(m_audioSource->GetCurrentWritePosition(), m_audioBuffer.m_writePointer) / (44100 * 0.1));
     m_performanceCluster->addInputBufferUsageSample(
         (double)m_simulator.getSynthesizerInputLatency() / m_simulator.getSynthesizerInputLatencyTarget());
 }
