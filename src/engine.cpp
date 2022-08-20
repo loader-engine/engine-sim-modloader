@@ -44,7 +44,7 @@ Engine::~Engine() {
 }
 
 void Engine::UpdateShit() {
-    for (int i = 0; getIntakeCount(); i++) {
+    for (int i = 0; i < getIntakeCount(); i++) {
         getIntake(i)->addPress = press;
         getIntake(i)->addFlow = flow;
     }

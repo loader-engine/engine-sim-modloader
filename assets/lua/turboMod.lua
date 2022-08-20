@@ -4,13 +4,13 @@ ModDescription = "TurboCharger mod"
 ModVersion = "0.0.1"
 
 spool = 0
-spoolBoostMult = 0.0001
+spoolBoostMult = 0.00001
 spoolMult = 100
 frictionSub = 0.001
 wastegateTrigger = 5
 pressMult = 2000
 outputPressDiv = 5
-threshold = 0.000015
+threshold = 0.00001
 
 function OnProcess(dt)
 	
@@ -48,8 +48,6 @@ function OnProcess(dt)
 		spool = -0.5
 	end
 
-	trace(spool)
-
 	-- apply the press and flow
 	i = spool / outputPressDiv
 	i = i * throttle
@@ -58,10 +56,6 @@ function OnProcess(dt)
 	i = spool * spoolBoostMult
 	i = i * throttle
 	Engine_IntakeFlow = i;
-	trace("ManPress")
-	trace(Engine_ManifoldPressure)
-	trace("Flow")
-	trace(Engine_IntakeFlow)
 
 end
 

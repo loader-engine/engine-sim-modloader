@@ -443,6 +443,14 @@ void EngineSimApplication::luaSetupEngineVars(bool start) {
 
         luaSetVar("Engine_IntakeFlow", std::to_string(avg));
 
+        double* ratios = getSimulator()->getTransmission()->m_gearRatios;
+        luaSetVar("Engine_Gear1", std::to_string(ratios[0]));
+        luaSetVar("Engine_Gear2", std::to_string(ratios[1]));
+        luaSetVar("Engine_Gear3", std::to_string(ratios[2]));
+        luaSetVar("Engine_Gear4", std::to_string(ratios[3]));
+        luaSetVar("Engine_Gear5", std::to_string(ratios[4]));
+        luaSetVar("Engine_Gear6", std::to_string(ratios[5]));
+
         luaSetVar("Simulator_FPS", std::to_string(m_engine.GetAverageFramerate()));
     }
     
@@ -466,14 +474,30 @@ void EngineSimApplication::luaGetEngineVars() {
     //    //sim->getEngine()->getIntake(i)->addPress = press;
     //}
     engine->press = press;
-    Logger::DebugLine("setting intake press: " + result);
+    //Logger::DebugLine("setting intake press: " + result);
 
     result = luaGetVar("Engine_IntakeFlow");
     double flow = std::stod(result);
     engine->flow = flow;
-    Logger::DebugLine("setting intake flow: " + result);
+    //Logger::DebugLine("setting intake flow: " + result);
 
-    //engine->UpdateShit();
+    //double res[5] = {};
+    //result = luaGetVar("Engine_Gear1");
+    //res[0] = std::stod(result);
+    //result = luaGetVar("Engine_Gear2");
+    //res[1] = std::stod(result);
+    //result = luaGetVar("Engine_Gear3");
+    //res[2] = std::stod(result);
+    //result = luaGetVar("Engine_Gear4");
+    //res[3] = std::stod(result);
+    //result = luaGetVar("Engine_Gear5");
+    //res[4] = std::stod(result);
+    //result = luaGetVar("Engine_Gear6");
+    //res[5] = std::stod(result);
+
+    //getSimulator()->getTransmission()->m_gearRatios = res;
+
+    engine->UpdateShit();
 
     //free(engine);
 }

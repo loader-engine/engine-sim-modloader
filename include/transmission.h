@@ -28,6 +28,9 @@ class Transmission {
         inline int getGear() const { return m_gear; }
         inline void setClutchPressure(double pressure) { m_clutchPressure = pressure; }
         inline double getClutchPressure() const { return m_clutchPressure; }
+        
+        int m_gearCount;
+        double* m_gearRatios;
 
     protected:
         atg_scs::ClutchConstraint m_clutchConstraint;
@@ -36,8 +39,6 @@ class Transmission {
 
         int m_gear;
         int m_newGear;
-        int m_gearCount;
-        double *m_gearRatios;
         double m_maxClutchTorque;
         double m_clutchPressure;
 };
