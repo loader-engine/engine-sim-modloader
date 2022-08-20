@@ -25,15 +25,11 @@
 #include "../discord/Discord.h"
 #endif
 
-<<<<<<< HEAD
-std::string EngineSimApplication::s_buildVersion = "0.1.7a";
+std::string EngineSimApplication::s_buildVersion = "0.1.8a";
 std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
-=======
-std::string EngineSimApplication::s_buildVersion = "0.1.8a";
->>>>>>> d046744862b1e8f167b4dd093f5e013f55e1bda2
 
 void EngineSimApplication::SetPink(double R, double G, double B) {
     m_pink = ysColor::srgbiToLinear(R, G, B);
