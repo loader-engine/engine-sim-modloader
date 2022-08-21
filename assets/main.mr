@@ -2,7 +2,8 @@ import "engine_sim.mr"
 import "engines/kohler/kohler_ch750.mr"
 import "engines/kohler/Rb25.mr"
 import "engines/chevrolet/chev_truck_454.mr"
+import "engines/mini/cooperS.mr"
 
 set_engine(
-    engine: Nissan_Rb25()
+    engine: cooper()
 )

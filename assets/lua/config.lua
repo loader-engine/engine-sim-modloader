@@ -1,2 +1,2 @@
-setVolume(20)
+setVolume(100)
 setFrequency(9000)

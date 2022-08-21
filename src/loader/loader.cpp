@@ -473,12 +473,12 @@ void EngineSimApplication::luaGetEngineVars() {
     //    //Simulator* sim = &m_simulator;
     //    //sim->getEngine()->getIntake(i)->addPress = press;
     //}
-    engine->press = press;
+    //engine->press = press;
     //Logger::DebugLine("setting intake press: " + result);
 
     result = luaGetVar("Engine_IntakeFlow");
     double flow = std::stod(result);
-    engine->flow = flow;
+    //engine->flow = flow;
     //Logger::DebugLine("setting intake flow: " + result);
     
     //double res[5] = {};
