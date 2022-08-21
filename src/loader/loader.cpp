@@ -124,6 +124,43 @@ int luaSetFrequency(lua_State* lua) {
     return 0;
 }
 
+int luaSetAntilag(lua_State* lua) {
+    assert(lua_isboolean(lua, 1));
+    assert(lua_isboolean(lua, 2));
+
+    int set = lua_toboolean(lua, 1);
+    int set2 = lua_toboolean(lua, 2);
+    
+    EngineSimApplication::instance->antilag = set == 1 ? true : false;
+    EngineSimApplication::instance->often = set2 == 1 ? true : false;
+
+    return 0;
+}
+
+int luaSetMixture(lua_State* lua) {
+    assert(lua_isboolean(lua, 1));
+
+    int set = lua_toboolean(lua, 1);
+
+    for (int i = 0; i < EngineSimApplication::instance->m_simulator.getEngine()->getIntakeCount(); i++)
+        EngineSimApplication::instance->m_simulator.getEngine()->getIntake(i)->rich = set;
+
+    return 0;
+}
+
+int luaSetGear(lua_State* lua) {
+    assert(lua_isnumber(lua, 1));
+    assert(lua_isnumber(lua, 2));
+
+    int index = (int)lua_tonumber(lua, 1);
+    double ratio = (double)lua_tonumber(lua, 2);
+
+    EngineSimApplication::instance->ratios[index] = ratio;
+
+    return 0;
+}
+
+
 int luaSetTorqueUnit(lua_State* lua) {
     assert(lua_isstring(lua, 1));
 
@@ -616,6 +653,10 @@ void EngineSimApplication::loadLua(std::string luaPath) {
     lua_setglobal(L, "setVolume");
     lua_pushcclosure(L, luaSetFrequency, 0);
     lua_setglobal(L, "setFrequency");
+    lua_pushcclosure(L, luaSetAntilag, 0);
+    lua_setglobal(L, "setAntilag");
+    lua_pushcclosure(L, luaSetMixture, 0);
+    lua_setglobal(L, "setMixture");
 
     lua_pushcclosure(L, luaSetTorqueUnit, 0);
     lua_setglobal(L, "setTorqueUnit");

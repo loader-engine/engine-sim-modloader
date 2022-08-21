@@ -425,6 +425,7 @@ float EngineSimApplication::unitsToPixels(float units) const {
     return units * f;
 }
 
+int cntdown = 0;
 void EngineSimApplication::run() {
     double throttle = 1.0;
     double targetThrottle = 1.0;
@@ -723,6 +724,51 @@ void EngineSimApplication::run() {
 
         if (!m_paused || m_engine.ProcessKeyDown(ysKey::Code::Right)) {
             process(m_engine.GetFrameLength());
+        }
+
+        bool pop = false;
+        //Logger::DebugLine(std::to_string(m_simulator.getEngine()->getThrottlePlateAngle()));
+        if (m_simulator.getEngine()->getIntakeAfr() < 12 && m_simulator.getEngine()->getRpm() >= 2500 && m_simulator.getEngine()->getThrottle() == 1)
+        {
+            if (cntdown <= 0)
+            {
+                pop = true;
+                if (often)
+                {
+                    cntdown = rand() % 10;
+                    if (cntdown < 2)
+                        cntdown = 2;
+                }
+                else
+                {
+                    cntdown = rand() % 20;
+                    if (cntdown < 6)
+                        cntdown = 6;
+                }
+            }
+        }
+        else if (m_simulator.getEngine()->getIgnitionModule()->m_revLimitTimer > 0)
+        {
+            if (cntdown <= 0)
+            {
+                pop = true;
+                cntdown = 4;
+            }
+        }
+        cntdown--;
+
+        if (pop)
+        {
+            //Logger::DebugLine("POP!");
+            // TODO: add some flow
+            //for(int i = 0; i < m_simulator.getEngine()->getExhaustSystemCount(); i++)
+            //    m_simulator.getEngine()->getExhaustSystem(i)->m_flow += (rand() % 100);
+            double data = 23425345.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
+            data = 16342324.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
+            data = 12416654.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
         }
 
         m_uiManager.update(m_engine.GetFrameLength());

@@ -5,5 +5,5 @@ import "engines/chevrolet/chev_truck_454.mr"
 import "engines/mini/cg10de.mr"
 
 set_engine(
-    engine: cg10de()
+    engine: Nissan_Rb25()
 )

@@ -40,6 +40,7 @@ class IgnitionModule : public Part {
         double getTimingAdvance();
 
         bool m_enabled;
+        double m_revLimitTimer;
 
     protected:
         SparkPlug *getPlug(int i);
@@ -51,7 +52,6 @@ class IgnitionModule : public Part {
 
         double m_lastCrankshaftAngle;
         double m_revLimit;
-        double m_revLimitTimer;
         double m_limiterDuration;
 };
 

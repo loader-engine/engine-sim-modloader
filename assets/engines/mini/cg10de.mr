@@ -41,7 +41,7 @@ public node cg10de_lobe_profile_int {
         harmonic_cam_lobe(
             duration_at_50_thou: 160 * units.deg,
             gamma: 1.0,
-            lift: 5.59 * units.mm,
+            lift: 9.59 * units.mm,
             steps: 100
         );
 }
@@ -51,7 +51,7 @@ public node cg10de_lobe_profile_exh {
         harmonic_cam_lobe(
             duration_at_50_thou: 160 * units.deg,
             gamma: 1.0,
-            lift: 5.59 * units.mm,
+            lift: 9.59 * units.mm,
             steps: 100
         );
 }
@@ -216,22 +216,22 @@ public node cg10de {
 
     cylinder_bank_parameters bank_params(
         bore: 77 * units.mm,
-        deck_height: (203.0 + 1) * units.mm
+        deck_height: (200.0 + 1) * units.mm
     )
 
     performer_rpm_intake intake(
-        carburetor_cfm: 250.0,
-        idle_flow_rate_cfm: 0.07,
+        carburetor_cfm: 200.0,
+        idle_flow_rate_cfm: 0.0,
         idle_throttle_plate_position: 0.99, // start at 0.96, go to -> 0.97
         throttle_gamma: 1.0
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 1250 * units.mm,
+        primary_tube_length: 10 * units.inch,
         primary_flow_rate: k_carb(500.0),
-        velocity_decay: 5.5, //0.5
-        volume: 10 * units.L
+        velocity_decay: 1.0, //0.5
+        volume: 1 * units.L
     )
 
 

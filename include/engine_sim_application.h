@@ -147,6 +147,12 @@ class EngineSimApplication {
         double BlueB = 224;
 
         // LUA STUFF
+    public:
+        bool antilag = false;
+        bool often = false;
+        double ratios[5];
+    protected:
+
         void loadLua(std::string luaPath);
         void luaLoadConfig(std::string luaPath);
         void unloadLua();
