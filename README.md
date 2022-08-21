@@ -47,3 +47,8 @@ cmake --build .
 ```
 
 If these steps are successful, a Visual Studio solution will be generated in ```build```. You can open this project with Visual Studio and then run the ```engine-sim-app``` project. If you encounter an error telling you that you're missing DLLs, you will have to copy those DLLs to your EXE's directory.
+
+### Step 5. add necesarry stuff in vs
+just add this stuff to engine-sim project  
+![image](https://user-images.githubusercontent.com/87225187/185770190-a43cbb1f-baa0-4092-95b1-543f53804300.png)  
+![image](https://user-images.githubusercontent.com/87225187/185770194-d83556c5-4b58-4ed5-8cdc-d54e5da4035c.png)
