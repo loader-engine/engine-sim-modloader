@@ -7,3 +7,7 @@ import "engines/mini/cg10de.mr"
 set_engine(
     engine: Nissan_Rb25()
 )
+
+set_application_settings(
+    start_fullscreen: false
+)
