@@ -15,7 +15,7 @@ public node cooper_distributor {
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
             .connect_wire(wires.wire3, (1.0/4.0) * cycle)
-            .connect_wire(wires.wire4, (0.0/4.0) * cycle)
+            .connect_wire(wires.wire4, (2.0/4.0) * cycle)
             .connect_wire(wires.wire2, (3.0/4.0) * cycle);
 }
 
@@ -39,7 +39,7 @@ private node add_sym_sample {
 public node cooper_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 120 * units.deg,
+            duration_at_50_thou: 150 * units.deg,
             gamma: 0.8,
             lift: 8.8 * units.mm,
             steps: 100
@@ -49,7 +49,7 @@ public node cooper_lobe_profile_int {
 public node cooper_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 120 * units.deg,
+            duration_at_50_thou: 150 * units.deg,
             gamma: 0.8,
             lift: 8.8 * units.mm,
             steps: 100
@@ -88,13 +88,13 @@ public node cooper_camshaft_builder {
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center)
         .add_lobe(rot360 + intake_lobe_center + 4 * rot120)
-        .add_lobe(rot360 + intake_lobe_center + 2 * rot120)
+        .add_lobe(rot360 + intake_lobe_center + 3 * rot120)
         .add_lobe(rot360 + intake_lobe_center + 5 * rot120)
 
     _exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center)
         .add_lobe(rot360 - exhaust_lobe_center + 4 * rot120)
-        .add_lobe(rot360 - exhaust_lobe_center + 2 * rot120)
+        .add_lobe(rot360 - exhaust_lobe_center + 3 * rot120)
         .add_lobe(rot360 - exhaust_lobe_center + 5 * rot120)
 }
 
@@ -169,7 +169,7 @@ public node cooper {
     engine engine(
         name: "Mini Cooper S R53",
         starter_torque: 150 * units.lb_ft,
-        starter_speed: 750 * units.rpm,
+        starter_speed: 1750 * units.rpm,
         redline: 7000 * units.rpm,
         fuel: fuel(
                     max_turbulence_effect: 3.0,
@@ -187,7 +187,7 @@ public node cooper {
         moment_of_inertia: 0.22986844776863666 * 0.9,
         position_x: 0.0,
         position_y: 0.0,
-        tdc: 18.0 * units.deg
+        tdc: 180.0 * units.deg
     )
 
     rod_journal rj0(angle: 0*units.deg)
@@ -218,7 +218,7 @@ public node cooper {
 
     cylinder_bank_parameters bank_params(
         bore: 77 * units.mm,
-        deck_height: (200.0 + 1) * units.mm
+        deck_height: (205.0 + 1) * units.mm
     )
 
     performer_rpm_intake intake(
@@ -303,12 +303,12 @@ public node cooper {
 
     function timing_curve(1000 * units.rpm)
     timing_curve
-        .add_sample(0000 * units.rpm, 22 * units.deg)
-        .add_sample(1000 * units.rpm, 22 * units.deg)
-        .add_sample(2000 * units.rpm, 35 * units.deg)
-        .add_sample(3000 * units.rpm, 35 * units.deg)
-        .add_sample(4000 * units.rpm, 35 * units.deg)
-        .add_sample(5000 * units.rpm, 35 * units.deg)
+        .add_sample(0000 * units.rpm, 42 * units.deg)
+        .add_sample(1000 * units.rpm, 42 * units.deg)
+        .add_sample(2000 * units.rpm, 55 * units.deg)
+        .add_sample(3000 * units.rpm, 55 * units.deg)
+        .add_sample(4000 * units.rpm, 55 * units.deg)
+        .add_sample(5000 * units.rpm, 55 * units.deg)
 
     engine.add_ignition_module(
         cooper_distributor(
