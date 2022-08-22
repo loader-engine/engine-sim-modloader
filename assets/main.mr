@@ -1,11 +1,12 @@
 import "engine_sim.mr"
 import "engines/kohler/kohler_ch750.mr"
 import "engines/kohler/Rb25.mr"
+import "engines/kohler/t4age.mr"
 import "engines/chevrolet/chev_truck_454.mr"
 import "engines/mini/cg10de.mr"
 
 set_engine(
-    engine: Nissan_Rb25()
+    engine: cg10de()
 )
 
 set_application_settings(

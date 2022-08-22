@@ -231,7 +231,7 @@ public node cg10de {
         primary_tube_length: 10 * units.inch,
         primary_flow_rate: k_carb(500.0),
         velocity_decay: 1.0, //0.5
-        volume: 1 * units.L
+        volume: 10 * units.L
     )
 
 

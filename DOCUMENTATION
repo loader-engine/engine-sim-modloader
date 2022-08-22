@@ -16,6 +16,10 @@
                 
                 All color variables must be set in colors.lua instead of any other file!
 
+            EVENTS:
+
+                add this plz in 7-8 hours plz
+
             FUNCTIONS:
 
                 addProcessHandler(function)
@@ -75,6 +79,10 @@
 
                 setGear1(index, value)
                     - Sets gear ratio of gear index
+
+                synthAdd(value)
+                    - Adds something to the synthetiser
+
 
             VARIABLES:
                 

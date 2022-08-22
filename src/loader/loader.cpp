@@ -224,6 +224,17 @@ static int luaInfo(lua_State* lua)
     return 0;
 }
 
+int luaAddSynth(lua_State* lua) {
+    assert(lua_isnumber(lua, 1));
+
+    double value = (double)lua_tonumber(lua, 1);
+    
+    EngineSimApplication::instance->m_simulator.getSynthesizer()->writeInput(&value);
+    //Logger::DebugLine(std::to_string(value));
+
+    return 0;
+}
+
 /*
 void EngineSimApplication::luaUI_setColors(lua_State* lua)
 {
@@ -240,9 +251,11 @@ void EngineSimApplication::luaUI_setColors(lua_State* lua)
 
 int process_handlers[100];
 int start_handlers[100];
+int tick_handlers[100];
 
 int numProcessHandlers = 0;
 int numStartHandlers = 0;
+int numTickHandlers = 0;
 
 static int addInputHandler(lua_State* L) {
     if (!lua_isfunction(L, 1)) {
@@ -293,6 +306,26 @@ void EngineSimApplication::luaStart() {
     }
 
     //luaGetUiVars();
+}
+
+static int addTickHandler(lua_State* L) {
+    if (!lua_isfunction(L, 1)) {
+        luaL_argerror(L, 1, "expected function");
+    }
+    lua_pushvalue(L, -1);
+    tick_handlers[numTickHandlers++] = luaL_ref(L, LUA_REGISTRYINDEX);
+    Logger::DebugLine("added handler for tick");
+
+    return 0;
+}
+
+
+void EngineSimApplication::luaTick(float dt) {
+    int i;
+    for (i = 0; i < numStartHandlers; ++i) {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, start_handlers[i]);
+        lua_pcall(L, 0, 0, 0);
+    }
 }
 
 void EngineSimApplication::luaSetupVars() {
@@ -667,11 +700,16 @@ void EngineSimApplication::loadLua(std::string luaPath) {
     lua_pushcclosure(L, luaSetPressureUnit, 0);
     lua_setglobal(L, "setPressureUnit");
 
+    lua_pushcclosure(L, luaAddSynth, 0);
+    lua_setglobal(L, "synthAdd");
+
     Logger::DebugLine("Setting up lua handlers");
     lua_pushcclosure(L, addInputHandler, 0);
     lua_setglobal(L, "addProcessHandler");
     lua_pushcclosure(L, addStartHandler, 0);
     lua_setglobal(L, "addStartHandler");
+    lua_pushcclosure(L, addTickHandler, 0);
+    lua_setglobal(L, "addTickHandler");
 
     Logger::DebugLine("Loading files...");
 

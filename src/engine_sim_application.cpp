@@ -726,6 +726,7 @@ void EngineSimApplication::run() {
 
         if (!m_paused || m_engine.ProcessKeyDown(ysKey::Code::Right)) {
             process(m_engine.GetFrameLength());
+            luaTick(m_engine.GetFrameLength());
         }
 
         bool pop = false;

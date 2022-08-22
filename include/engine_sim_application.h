@@ -183,6 +183,7 @@ class EngineSimApplication {
 
         // LUA FUNCTIONS
         void luaProcess(float dt);
+        void luaTick(float dt);
 
         void luaStart();
 

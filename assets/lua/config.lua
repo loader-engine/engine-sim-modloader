@@ -4,5 +4,5 @@ setAntilag(true, false)
 -- isOn = true, isOften = true
 -- isOn = true, isOften = false
 
-setMixture(false)
+setMixture(true)
 -- rich: true normal: false

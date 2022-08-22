@@ -1,0 +1,327 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+public node toyota_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 8500 * units.rpm;
+	input limiter_duration: 0.08;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.0/4.0) * cycle)
+			.connect_wire(wires.wire3, (1.0/4.0) * cycle)
+			.connect_wire(wires.wire4, (2.0/4.0) * cycle)
+			.connect_wire(wires.wire2, (3.0/4.0) * cycle);
+}
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+}
+
+private node add_sym_sample {
+    input angle;
+    input lift;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(angle * units.deg, lift * units.thou)
+    this.add_sample(-angle * units.deg, lift * units.thou)
+}
+
+public node t4age_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 176 * units.deg,
+            gamma: 0.8,
+            lift: 10.2 * units.mm,
+            steps: 100
+        );
+}
+
+public node t4age_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 176 * units.deg,
+            gamma: 0.8,
+            lift: 10 * units.mm,
+            steps: 100
+        );
+}
+/*public node t4age_lobe_profile_int {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 260 * units.deg,
+            gamma: 1.2,
+            lift: 0.397 * units.inch,
+            steps: 100
+        );
+}
+
+public node t4age_lobe_profile_exh {
+    alias output __out:
+        harmonic_cam_lobe(
+            duration_at_50_thou: 242 * units.deg,
+            gamma: 0.8,
+            lift: 0.301 * units.inch,
+            steps: 100
+        );
+}
+*/
+public node toyota_camshaft_builder {
+    input lobe_profile: t4age_lobe_profile_int();
+	input ex_lobe_profile: t4age_lobe_profile_exh();
+    input intake_lobe_profile: lobe_profile;
+    input exhaust_lobe_profile: ex_lobe_profile;
+    input lobe_separation: 108.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: 108.0 * units.deg;
+    input advance: -15.0 * units.deg;
+    input base_radius: 0.7 * units.inch;
+
+    output intake_cam_0: _intake_cam_0;
+    output exhaust_cam_0: _exhaust_cam_0;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _intake_cam_0(params, lobe_profile: intake_lobe_profile)
+    camshaft _exhaust_cam_0(params, lobe_profile: exhaust_lobe_profile)
+
+	label rot360(360 * units.deg)
+	label cycle(2 * 360 * units.deg)
+
+    _intake_cam_0
+        .add_lobe(rot360 + lobe_separation + 0.0/4 * cycle + 0.07)
+		.add_lobe(rot360 + lobe_separation + 3.0/4 * cycle + 0.05)
+		.add_lobe(rot360 + lobe_separation + 1.0/4 * cycle - 0.05)
+		.add_lobe(rot360 + lobe_separation + 2.0/4 * cycle - 0.07)
+
+	_exhaust_cam_0
+        .add_lobe(rot360 - exhaust_lobe_center + 0.0/4 * cycle +0.08)
+        .add_lobe(rot360 - exhaust_lobe_center + 3.0/4 * cycle -0.05)
+		.add_lobe(rot360 - exhaust_lobe_center + 1.0/4 * cycle -0.08)
+		.add_lobe(rot360 - exhaust_lobe_center + 2.0/4 * cycle +0.05)
+}
+
+private node add_flow_sample {
+    input lift;
+    input flow;
+    input this;
+    alias output __out: this;
+
+    this.add_sample(lift * units.thou, k_28inH2O(flow))
+}
+
+
+public node toyota_4age_head {
+    input intake_camshaft;
+    input exhaust_camshaft;
+    input chamber_volume: 36.0 * units.cc;
+    input flip_display: false;
+    alias output __out: head;
+
+    function intake_flow(1 * units.mm)
+    intake_flow
+        .add_flow_sample(0, 0)
+        .add_flow_sample(2, 115)
+        .add_flow_sample(4, 168)
+        .add_flow_sample(6, 215)
+        .add_flow_sample(7, 234)
+        .add_flow_sample(8, 248)
+        .add_flow_sample(9, 262)
+        .add_flow_sample(10, 280)
+		.add_flow_sample(12, 310)
+        
+
+    function exhaust_flow(1* units.mm)
+    exhaust_flow
+        .add_flow_sample(0, 0)
+        .add_flow_sample(2, 108)
+        .add_flow_sample(4, 136)
+        .add_flow_sample(6, 154)
+        .add_flow_sample(7, 171)
+        .add_flow_sample(8, 184)
+        .add_flow_sample(9, 190)
+        .add_flow_sample(10, 200)
+        .add_flow_sample(11, 225)
+		.add_flow_sample(12, 238)
+
+        
+
+    cylinder_head head(
+        chamber_volume: chamber_volume,
+        intake_runner_volume: 400.0 * units.cc,
+        intake_runner_cross_section_area: 15.4087 * units.cm2,
+
+        intake_port_flow: intake_flow,
+        exhaust_port_flow: exhaust_flow,
+        intake_camshaft: intake_camshaft,
+        exhaust_camshaft: exhaust_camshaft,
+        flip_display: flip_display
+    )
+}
+
+
+public node toyota_4age {
+    alias output __out: engine;
+
+    engine engine(
+        name: "Toyota 4A-GE",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 500 * units.rpm,
+        redline: 8500 * units.rpm
+    )
+
+    wires wires()
+
+    crankshaft c0(
+        throw: 77 * units.mm / 2,
+        flywheel_mass: 15 * units.kg,
+        mass: 30 * units.kg,
+        friction_torque: 0.0 * units.lb_ft,
+        moment_of_inertia: 0.22986844776863666 * 1,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 720 * units.deg / 4 / 2
+    )
+	
+	label cycle(720 * units.deg)
+	
+    rod_journal rj0(angle: 0 * cycle/4)
+    rod_journal rj1(angle: 3 * cycle/4)
+    rod_journal rj2(angle: 1 * cycle/4)
+    rod_journal rj3(angle: 2 * cycle/4)
+	
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+
+    piston_parameters piston_params(
+        mass: 293 * units.g,
+        //blowby: k_28inH2O(0.1),
+        compression_height: 1.209 * units.inch,
+        wrist_pin_position: 0.0,
+        displacement: 0.2 * units.cc
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: 120.0 * units.g,
+        moment_of_inertia: 0.0015884918028487504,
+        center_of_mass: 0.0,
+        length: 122.0 * units.mm
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: 81.5 * units.mm,
+        deck_height: 191.0 * units.mm
+    )
+
+    intake intake(
+        plenum_volume: 1.3 * units.L,
+        plenum_cross_section_area: 20 * units.cm2,
+        intake_flow_rate: k_carb(8000),
+        idle_flow_rate: k_carb(0),
+        idle_throttle_plate_position: 0.9999,
+        throttle_gamma: 1
+    )
+
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(2000.0),
+        primary_tube_length: 1000.0 * units.mm,
+        primary_flow_rate: k_carb(900.0),
+        velocity_decay: 0.2, //0.5
+        volume: 150.0 * units.L
+    )
+
+    exhaust_system exhaust0(es_params, audio_volume: 0.5, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust1(es_params, audio_volume: 1.0, impulse_response: ir_lib.default_0)
+
+    cylinder_bank b0(bank_params, angle: 0 * units.deg)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire1
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            intake: intake,
+            exhaust_system: exhaust1,
+            ignition_wire: wires.wire2
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire3
+        )
+		.add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.1)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            intake: intake,
+            exhaust_system: exhaust1,
+            ignition_wire: wires.wire4
+        )
+
+
+    engine
+        .add_cylinder_bank(b0)
+
+    engine.add_crankshaft(c0)
+
+    toyota_camshaft_builder camshaft(
+	    lobe_profile: t4age_lobe_profile_int(),
+		ex_lobe_profile: t4age_lobe_profile_exh()
+	)
+
+    b0.set_cylinder_head (
+        toyota_4age_head(
+            intake_camshaft: camshaft.intake_cam_0,
+            exhaust_camshaft: camshaft.exhaust_cam_0
+        )
+    )
+
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 10 * units.deg)
+        .add_sample(1000 * units.rpm, 30 * units.deg)
+        .add_sample(2000 * units.rpm, 40 * units.deg)
+        .add_sample(3000 * units.rpm, 45 * units.deg)
+        .add_sample(4000 * units.rpm, 60 * units.deg)
+        .add_sample(5000 * units.rpm, 60 * units.deg)
+        .add_sample(6000 * units.rpm, 60 * units.deg)
+        .add_sample(7000 * units.rpm, 60 * units.deg)
+		.add_sample(8000 * units.rpm, 60 * units.deg)
+		.add_sample(9000 * units.rpm, 60 * units.deg)
+		.add_sample(10000 * units.rpm,21 * units.deg)
+		.add_sample(11000 * units.rpm,15 * units.deg)
+
+    engine.add_ignition_module(
+        toyota_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 8500 * units.rpm
+        ))
+}
