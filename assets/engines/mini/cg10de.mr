@@ -11,8 +11,9 @@ public node nissan_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6900 * units.rpm;
+    input limiter_duration: 0.050 * units.sec;
     alias output __out:
-        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit)
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
 			.connect_wire(wires.wire2, (2.0/4.0) * cycle)
 			.connect_wire(wires.wire3, (1.0/4.0) * cycle)
@@ -49,7 +50,7 @@ public node cg10de_lobe_profile_int {
 public node cg10de_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 160 * units.deg,
+            duration_at_50_thou: 170 * units.deg,
             gamma: 1.0,
             lift: 9.59 * units.mm,
             steps: 100
@@ -64,7 +65,7 @@ public node nissan_camshaft_builder {
     input lobe_separation: 110.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: 110.0 * units.deg;
-    input advance: 0.0 * units.deg;
+    input advance: 10.0 * units.deg;
     input base_radius: 0.6 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -231,7 +232,7 @@ public node cg10de {
         primary_tube_length: 10 * units.inch,
         primary_flow_rate: k_carb(500.0),
         velocity_decay: 1.0, //0.5
-        volume: 10 * units.L
+        volume: 100 * units.L
     )
 
 

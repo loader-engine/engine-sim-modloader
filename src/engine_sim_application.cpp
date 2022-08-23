@@ -196,6 +196,7 @@ void EngineSimApplication::initialize() {
     compiler.initialize();
     const bool compiled = compiler.compile("../assets/main.mr");
     if (compiled) {
+        Logger::DebugLine("Compiled main.mr file");
         const es_script::Compiler::Output output = compiler.execute();
         configure(output.applicationSettings);
 
@@ -203,7 +204,9 @@ void EngineSimApplication::initialize() {
     }
     else {
         m_iceEngine = nullptr;
-        MessageBox(NULL, "Compiler failed to compile main.mr file!", NULL, MB_OK);
+        Logger::DebugLine("Failed to compile main.mr");
+        MessageBox(NULL, "I'm sorry, the compiler failed to compile the main.mr file.\nI'm not sure what you did wrong, but please check the error log for more info.\nThank you.", NULL, MB_OK);
+        exit(1);
     }
 
     compiler.destroy();

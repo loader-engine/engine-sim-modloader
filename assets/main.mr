@@ -4,6 +4,7 @@ import "engines/kohler/Rb25.mr"
 import "engines/kohler/t4age.mr"
 import "engines/chevrolet/chev_truck_454.mr"
 import "engines/mini/cg10de.mr"
+import "engines/mini/cooperS.mr"
 
 set_engine(
     engine: cg10de()
