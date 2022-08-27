@@ -102,6 +102,7 @@ class EngineSimApplication {
 
         Simulator *getSimulator() { return &m_simulator; }
         InfoCluster *getInfoCluster() { return m_infoCluster; }
+        ApplicationSettings* getAppSettings() { return &m_appSettings; }
 
         std::string UNIT_TYPE_TORQUE = "imperial";
         std::string UNIT_TYPE_SPEED = "imperial";
@@ -191,7 +192,8 @@ class EngineSimApplication {
         int m_gameWindowHeight;
         int m_screenWidth;
         int m_screenHeight;
-
+        
+        ApplicationSettings m_appSettings;
         dbasic::ShaderSet m_shaderSet;
         Shaders m_shaders;
 
