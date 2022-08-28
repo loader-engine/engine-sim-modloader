@@ -16,12 +16,7 @@ class LoadSimulationCluster : public UiElement {
 
         virtual void update(float dt);
         virtual void render();
-<<<<<<< HEAD
         void setUnits();
-=======
-        void   setUnits();
-        double getPower(double torque);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
         void setSimulator(Simulator *simulator) { m_simulator = simulator; }
 

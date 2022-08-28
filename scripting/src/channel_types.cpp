@@ -18,9 +18,6 @@ DEFINE_CHANNEL(IgnitionWireChannel);
 DEFINE_CHANNEL(FuelChannel);
 DEFINE_CHANNEL(ImpulseResponseChannel);
 DEFINE_CHANNEL(ValvetrainChannel);
-<<<<<<< HEAD
 DEFINE_CHANNEL(VehicleChannel);
 DEFINE_CHANNEL(TransmissionChannel);
 DEFINE_CHANNEL(ThrottleChannel);
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
