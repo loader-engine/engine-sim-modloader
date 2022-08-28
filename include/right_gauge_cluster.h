@@ -23,9 +23,15 @@ class RightGaugeCluster : public UiElement {
         virtual void update(float dt);
         virtual void render();
 
+<<<<<<< HEAD
+        void setEngine(Engine *engine);
+        void setUnits();
+        double getManifoldPressureWithUnits(double ambientPressure);
+=======
         void   setEngine(Engine *engine);
         void   setUnits();
         double getPressureVaccuum(double ambientPressure);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         Simulator *m_simulator;
 
     protected:
@@ -45,7 +51,11 @@ class RightGaugeCluster : public UiElement {
         FiringOrderDisplay *m_combusionChamberStatus;
         std::string m_speedUnits;
         std::string m_pressureUnits;
+<<<<<<< HEAD
+        bool m_isAbsolute;
+=======
         bool isAbsolute;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 };
 
 #endif /* ATG_ENGINE_SIM_GAUGE_CLUSTER_H */

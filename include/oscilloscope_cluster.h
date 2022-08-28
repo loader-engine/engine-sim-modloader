@@ -36,7 +36,7 @@ class OscilloscopeCluster : public UiElement {
         Oscilloscope *getSparkAdvanceScope() const { return m_sparkAdvanceScope; }
         Oscilloscope *getCylinderMoleculesScope() const { return m_cylinderMoleculesScope; }
         Oscilloscope *getPvScope() const { return m_pvScope; }
-        void setDynoMaxRange(double redline) { m_torqueScope->m_xMax = redline + 500; m_hpScope->m_xMax = redline + 500; }
+        void setDynoMaxRange(double redline) { m_torqueScope->m_xMax = redline + 500; m_powerScope->m_xMax = redline + 500; }
 
     protected:
         void renderScope(
@@ -48,7 +48,7 @@ class OscilloscopeCluster : public UiElement {
         Simulator *m_simulator;
         Oscilloscope
             *m_torqueScope,
-            *m_hpScope,
+            *m_powerScope,
             *m_audioWaveformScope,
             *m_exhaustValveLiftScope,
             *m_intakeValveLiftScope,
@@ -64,7 +64,11 @@ class OscilloscopeCluster : public UiElement {
         float m_updateTimer;
 
         double m_torque;
+<<<<<<< HEAD
+        double m_power;
+=======
         double m_hp;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
         std::string m_powerUnits;
         std::string m_torqueUnits;

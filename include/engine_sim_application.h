@@ -21,6 +21,10 @@
 #include "mixer_cluster.h"
 #include "info_cluster.h"
 #include "application_settings.h"
+<<<<<<< HEAD
+#include "transmission.h"
+=======
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
 #include "delta.h"
 #include "dtv.h"
@@ -76,8 +80,8 @@ class EngineSimApplication {
         float unitsToPixels(float units) const;
 
         ysVector getBackgroundColor() const { return m_background; }
+        ysVector getForegroundColor() const { return m_foreground; }
         ysVector getHightlight1Color() const { return m_highlight1; }
-        ysVector getWhite() const { return ysMath::Constants::One; }
         ysVector getPink() const { return m_pink; }
         ysVector getGreen() const { return m_green; }
         ysVector getYellow() const { return m_yellow; }
@@ -102,7 +106,11 @@ class EngineSimApplication {
 
         Simulator *getSimulator() { return &m_simulator; }
         InfoCluster *getInfoCluster() { return m_infoCluster; }
+<<<<<<< HEAD
+        ApplicationSettings* getAppSettings() { return &m_applicationSettings; }
+=======
         ApplicationSettings* getAppSettings() { return &m_appSettings; }
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
         std::string UNIT_TYPE_TORQUE = "imperial";
         std::string UNIT_TYPE_SPEED = "imperial";
@@ -193,7 +201,11 @@ class EngineSimApplication {
         int m_screenWidth;
         int m_screenHeight;
         
+<<<<<<< HEAD
+        ApplicationSettings m_applicationSettings;
+=======
         ApplicationSettings m_appSettings;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         dbasic::ShaderSet m_shaderSet;
         Shaders m_shaders;
 
@@ -213,6 +225,8 @@ class EngineSimApplication {
 
         std::vector<SimulationObject *> m_objects;
         Engine *m_iceEngine;
+        Vehicle *m_vehicle;
+        Transmission *m_transmission;
         Simulator m_simulator;
         double m_dynoSpeed;
         double m_torque;
