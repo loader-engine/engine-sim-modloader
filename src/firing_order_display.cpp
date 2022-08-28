@@ -52,7 +52,7 @@ void FiringOrderDisplay::update(float dt) {
 }
 
 void FiringOrderDisplay::render() {
-    drawFrame(m_bounds, 1.0, ysMath::Constants::One, m_app->getBackgroundColor());
+    drawFrame(m_bounds, 1.0, m_app->getForegroundColor(), m_app->getBackgroundColor());
 
     const Bounds title = m_bounds.verticalSplit(1.0f, 0.9f);
     const Bounds body = m_bounds.verticalSplit(0.0f, 0.9f);
@@ -68,15 +68,31 @@ void FiringOrderDisplay::render() {
     GeometryGenerator *generator = m_app->getGeometryGenerator();
 
     const ysVector background = m_app->getBackgroundColor();
-    const ysVector hot = mix(background, m_app->getWhite(), 1.0f);
-    const ysVector fixed = mix(background, m_app->getWhite(), 0.01f);
-    const ysVector cold = mix(background, m_app->getWhite(), 0.001f);
+    const ysVector hot = mix(background, m_app->getForegroundColor(), 1.0f);
+    const ysVector fixed = mix(background, m_app->getForegroundColor(), 0.02f);
+    const ysVector cold = mix(background, m_app->getForegroundColor(), 0.001f);
+
+    std::vector<CylinderBank *> orderedBanks;
+    std::map<CylinderBank *, int> bankToIndex;
+    for (int i = 0; i < m_engine->getCylinderBankCount(); ++i) {
+        orderedBanks.push_back(m_engine->getCylinderBank(i));
+    }
+
+    std::sort(
+        orderedBanks.begin(),
+        orderedBanks.end(),
+        [](CylinderBank *a, CylinderBank *b) {
+            return a->getAngle() < b->getAngle();
+        });
+    for (int i = 0; i < m_engine->getCylinderBankCount(); ++i) {
+        bankToIndex[orderedBanks[i]] = i;
+    }
 
     for (int i = 0; i < m_engine->getCylinderCount(); ++i) {
         Piston *piston = m_engine->getPiston(i);
         CombustionChamber *chamber = m_engine->getChamber(i);
         CylinderBank *bank = piston->getCylinderBank();
-        const int bankIndex = bank->getIndex();
+        const int bankIndex = bankToIndex[bank];
         const double lit = m_cylinderLit[i];
 
         const Bounds &b = grid.get(body, banks - bankIndex - 1, 0);

@@ -1,8 +1,14 @@
 import "engine_sim.mr"
+import "themes/default.mr"
 import "engines/kohler/kohler_ch750.mr"
 import "engines/kohler/Rb25.mr"
 import "engines/chevrolet/chev_truck_454.mr"
 
+use_default_theme()
 set_engine(
+<<<<<<< HEAD
     engine: Nissan_Rb25()
+=======
+    kohler_ch750()
+>>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
 )
