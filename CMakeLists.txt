@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
 option(DTV "Enable video output" OFF)
-<<<<<<< HEAD
-=======
 option(PIRANHA_ENABLED "Enable scripting input" ON)
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
 option(DISCORD_ENABLED "Enable Discord Rich Presence" ON)
-option(PIRANHA_ENABLED "Enable scripting input" ON)
 
 if (DTV)
     add_compile_definitions(ATG_ENGINE_SIM_VIDEO_CAPTURE)

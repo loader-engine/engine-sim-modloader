@@ -93,18 +93,16 @@ class Engine : public Part {
         CombustionChamber *getChamber(int i) const { return &m_combustionChambers[i]; }
         Fuel *getFuel() { return &m_fuel; }
 
-<<<<<<< HEAD
     public:
         double press;
         double flow;
 
         void UpdateShit();
-=======
+
         double getSimulationFrequency() const { return m_initialSimulationFrequency; }
         double getInitialHighFrequencyGain() const { return m_initialHighFrequencyGain; }
         double getInitialNoise() const { return m_initialNoise; }
         double getInitialJitter() const { return m_initialJitter; }
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
 
     protected:
         std::string m_name;

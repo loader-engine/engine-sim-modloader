@@ -240,7 +240,9 @@ void OscilloscopeCluster::update(float dt) {
         ? (units::convert(m_simulator->getDynoPower(), units::kW))
         : (units::convert(m_simulator->getDynoPower(), units::hp));
 
-    const double hp = getPower(torque);
+    const double power = (m_powerUnits == "kW")
+        ? (units::convert(m_simulator->getDynoPower(), units::kW))
+        : (units::convert(m_simulator->getDynoPower(), units::hp));
 
     m_torque = m_torque * 0.95 + 0.05 * torque;
     m_power = m_power * 0.95 + 0.05 * power;
@@ -389,24 +391,4 @@ void OscilloscopeCluster::renderScope(
     }
 
     osc->m_bounds = bounds;
-}
-
-double OscilloscopeCluster::getPower(double torque)
-{
-    double power = 0;
-    if (m_powerUnits == "HP")
-    {
-        if (m_torqueUnits == "NM")
-            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
-        else
-            power = torque * m_simulator->getEngine()->getRpm() / 5252.0;
-    }
-    else if (m_powerUnits == "KW")
-    {
-        if (m_torqueUnits == "NM")
-            power = torque * m_simulator->getEngine()->getRpm() / 9549.0;
-        else
-            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
-    }
-    return power;
 }

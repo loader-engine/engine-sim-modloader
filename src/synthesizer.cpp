@@ -165,8 +165,6 @@ void Synthesizer::writeInput(const double *data) {
     }
 
     for (int i = 0; i < m_inputChannelCount; ++i) {
-        m_filters[i].JitterFilter.setJitterScale(m_audioParameters.InputSampleNoise);
-
         RingBuffer<float> &buffer = m_inputChannels[i].Data;
         const float lastInputSample = m_inputChannels[i].LastInputSample;
         const size_t baseIndex = buffer.writeIndex();

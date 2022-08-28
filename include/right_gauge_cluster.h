@@ -23,9 +23,9 @@ class RightGaugeCluster : public UiElement {
         virtual void update(float dt);
         virtual void render();
 
-        void   setEngine(Engine *engine);
-        void   setUnits();
-        double getPressureVaccuum(double ambientPressure);
+        void setEngine(Engine *engine);
+        void setUnits();
+        double getManifoldPressureWithUnits(double ambientPressure);
         Simulator *m_simulator;
 
     protected:
