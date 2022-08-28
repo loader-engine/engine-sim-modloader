@@ -156,7 +156,6 @@ void LoadSimulationCluster::update(float dt) {
     if (m_app->getEngine()->ProcessKeyDown(ysKey::Code::I)) {
         std::stringstream ss;
         ss << std::setprecision(0) << std::fixed;
-<<<<<<< HEAD
 
         /*
         if (EngineSimApplication::instance->UNIT_TYPE_TORQUE == "metric")

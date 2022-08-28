@@ -21,8 +21,6 @@ class OscilloscopeCluster : public UiElement {
         virtual void update(float dt);
         virtual void render();
 
-        double getPower(double torque);
-
         void sample();
         void setSimulator(Simulator *simulator);
 

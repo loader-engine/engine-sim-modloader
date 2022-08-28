@@ -208,10 +208,14 @@ void EngineSimApplication::initialize() {
     }
     else {
         m_iceEngine = nullptr;
-        Logger::DebugLine("Failed to compile main.mr");
-        MessageBox(NULL, "I'm sorry, the compiler failed to compile the main.mr file.\nI'm not sure what you did wrong, but please check the error log for more info.\nThank you.", NULL, MB_OK);
         m_vehicle = nullptr;
         m_transmission = nullptr;
+        m_vehicle = nullptr;
+        m_transmission = nullptr;
+
+        Logger::DebugLine("Failed to compile main.mr");
+        MessageBox(NULL, "I'm sorry, the compiler failed to compile the main.mr file.\nI'm not sure what you did wrong, but please check the error log for more info.\nThank you.", NULL, MB_OK);
+
         exit(1);
     }
 
@@ -326,11 +330,11 @@ void EngineSimApplication::initialize() {
     // Enable it, this needs to be set via a config file of some sort. 
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
+
     GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
-#endif
+#endif /* ATG_ENGINE_DISCORD_ENABLED */
 
     luaLoadConfig(luaScriptsPath);
-
 }
 
 void EngineSimApplication::process(float frame_dt) {
