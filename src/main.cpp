@@ -20,7 +20,7 @@ int WINAPI WinMain(
 
     bool recording = false;
     int rpm = 0;
-    bool rpmOn = false;
+    bool on = false;
 
     std::ifstream paramFile("params.txt");
     std::string line;
@@ -34,7 +34,7 @@ int WINAPI WinMain(
                 rpm = units::rpm(rpm - 1000);
             }
             if (line._Starts_with("on")) {
-                rpmOn = true;
+                on = true;
             }
         }
         paramFile.close();
@@ -46,12 +46,16 @@ int WINAPI WinMain(
     EngineSimApplication application;
     application.initialize((void*)&hInstance, ysContextObject::DeviceAPI::DirectX11);
 
-    application.getSimulator()->getEngine()->getIgnitionModule()->m_enabled = true;
-    application.getSimulator()->m_dyno.m_enabled = true;
-    application.getSimulator()->m_dyno.m_hold = true;
-    application.m_dynoSpeed = rpm;
-    if (rpmOn)
-        application.getSimulator()->getEngine()->setThrottle(0);
+    if (recording) {
+        application.getSimulator()->getEngine()->getIgnitionModule()->m_enabled = true;
+        application.getSimulator()->m_dyno.m_enabled = true;
+        application.getSimulator()->m_dyno.m_hold = true;
+        application.m_dynoSpeed = rpm;
+        application.rpmOn = on;
+    }
+    else {
+        application.rpmOn = false;
+    }
 
     application.run();
     application.destroy();

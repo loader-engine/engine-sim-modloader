@@ -240,10 +240,6 @@ void OscilloscopeCluster::update(float dt) {
         ? (units::convert(m_simulator->getDynoPower(), units::kW))
         : (units::convert(m_simulator->getDynoPower(), units::hp));
 
-    const double power = (m_powerUnits == "kW")
-        ? (units::convert(m_simulator->getDynoPower(), units::kW))
-        : (units::convert(m_simulator->getDynoPower(), units::hp));
-
     m_torque = m_torque * 0.95 + 0.05 * torque;
     m_power = m_power * 0.95 + 0.05 * power;
 

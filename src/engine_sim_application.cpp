@@ -627,7 +627,12 @@ void EngineSimApplication::run() {
 
         speedSetting = targetSpeedSetting * 0.5 + 0.5 * speedSetting;
 
-        m_iceEngine->setSpeedControl(speedSetting);
+        if (rpmOn) {
+            m_iceEngine->setSpeedControl(1);
+        }
+        else {
+            m_iceEngine->setSpeedControl(speedSetting);
+        }
 
         if (m_engine.ProcessKeyDown(ysKey::Code::M)) {
             const int currentLayer = getViewParameters().Layer0;

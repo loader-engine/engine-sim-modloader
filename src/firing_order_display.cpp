@@ -88,22 +88,6 @@ void FiringOrderDisplay::render() {
         bankToIndex[orderedBanks[i]] = i;
     }
 
-    std::vector<CylinderBank *> orderedBanks;
-    std::map<CylinderBank *, int> bankToIndex;
-    for (int i = 0; i < m_engine->getCylinderBankCount(); ++i) {
-        orderedBanks.push_back(m_engine->getCylinderBank(i));
-    }
-
-    std::sort(
-        orderedBanks.begin(),
-        orderedBanks.end(),
-        [](CylinderBank *a, CylinderBank *b) {
-            return a->getAngle() < b->getAngle();
-        });
-    for (int i = 0; i < m_engine->getCylinderBankCount(); ++i) {
-        bankToIndex[orderedBanks[i]] = i;
-    }
-
     for (int i = 0; i < m_engine->getCylinderCount(); ++i) {
         Piston *piston = m_engine->getPiston(i);
         CombustionChamber *chamber = m_engine->getChamber(i);

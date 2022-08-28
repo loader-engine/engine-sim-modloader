@@ -109,6 +109,7 @@ class EngineSimApplication {
         std::string UNIT_TYPE_SPEED = "imperial";
         std::string UNIT_TYPE_AIRFLOW = "imperial";
         std::string UNIT_TYPE_PRESSURE = "imperial";
+        bool rpmOn;
 
     protected:
         void renderScene();

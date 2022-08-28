@@ -110,6 +110,7 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
         m_speedometer->m_gauge->setBandCount(0);
     }
     */
+    /*
     m_speedometer->m_title = "VEHICLE SPEED";
     m_speedometer->m_unit = "MPH";
 
@@ -186,7 +187,8 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getWhite(), -30, -22, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
     }
-=======
+    */
+
     m_speedometer->m_title = "VEHICLE SPEED";
     m_speedometer->m_unit = "MPH";
 
