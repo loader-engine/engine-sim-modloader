@@ -21,7 +21,7 @@ RightGaugeCluster::RightGaugeCluster() {
     m_combusionChamberStatus = nullptr;
     m_throttleDisplay = nullptr;
     m_fuelCluster = nullptr;
-    isAbsolute = false;
+    m_isAbsolute = false;
 }
 
 RightGaugeCluster::~RightGaugeCluster() {
@@ -70,11 +70,7 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
     m_tachometer->m_gauge->setBand(
         { m_app->getRed(), 5500, 7000, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     /*
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     if (EngineSimApplication::instance->UNIT_TYPE_SPEED == "metric")
     {
         m_speedometer->m_title = "VEHICLE SPEED";
@@ -261,11 +257,7 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
     m_volumetricEffGauge->m_gauge->setBand(
         { m_app->getRed(), 100, 120, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     /*
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     if (EngineSimApplication::instance->UNIT_TYPE_AIRFLOW == "metric")
     {
         m_intakeCfmGauge->m_title = "AIR M3/MIN";
@@ -306,12 +298,8 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
         m_intakeCfmGauge->m_gauge->m_needleKd = 50.0f;
         m_intakeCfmGauge->m_gauge->setBandCount(0);
     }
-<<<<<<< HEAD
-=======
-=======
     */
 
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     m_intakeCfmGauge->m_title = "AIR SCFM";
     m_intakeCfmGauge->m_unit = "";
     m_intakeCfmGauge->m_precision = 1;
@@ -330,10 +318,6 @@ void RightGaugeCluster::initialize(EngineSimApplication *app) {
     m_intakeCfmGauge->m_gauge->setBandCount(0);
     //Set display units
     setUnits();
-<<<<<<< HEAD
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 }
 
 void RightGaugeCluster::destroy() {
@@ -392,11 +376,7 @@ void RightGaugeCluster::renderTachSpeedCluster(const Bounds &bounds) {
     m_tachometer->m_gauge->setBand(
         { m_app->getRed(), redline, maxRpm, 3.0f, 6.0f, shortenAngle, -shortenAngle }, 2);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     /*
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     if (EngineSimApplication::instance->UNIT_TYPE_SPEED == "metric")
     {
         const Bounds speed = left.verticalSplit(0.0f, 0.5f);
@@ -410,20 +390,6 @@ void RightGaugeCluster::renderTachSpeedCluster(const Bounds &bounds) {
         m_speedometer->m_bounds = speed;
         m_speedometer->m_gauge->m_value =
             (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::mile / units::hour);
-<<<<<<< HEAD
-
-    }
-=======
-    const Bounds speed = left.verticalSplit(0.0f, 0.5f);
-    m_speedometer->m_bounds = speed;
-
-    m_speedometer->m_gauge->m_value = (m_speedUnits == "mph") 
-        ? (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::mile / units::hour) 
-        : (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::km / units::hour);
-
-
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
-=======
             */
     const Bounds speed = left.verticalSplit(0.0f, 0.5f);
     m_speedometer->m_bounds = speed;
@@ -432,7 +398,6 @@ void RightGaugeCluster::renderTachSpeedCluster(const Bounds &bounds) {
         ? (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::mile / units::hour) 
         : (float)units::convert(std::abs(m_simulator->getVehicle()->getSpeed()), units::km / units::hour);
         
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     m_combusionChamberStatus->m_bounds = right;
 }
 
@@ -457,11 +422,7 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
     const Bounds manifoldVacuum = grid.get(right, 0, 0, 1, 1);
     m_manifoldVacuumGauge->m_bounds = manifoldVacuum;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     /*
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     if (EngineSimApplication::instance->UNIT_TYPE_PRESSURE == "metric")
     {
         const double vacuumReading =
@@ -478,20 +439,6 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
             ? 0.0f
             : (float)vacuumReading;
     }
-<<<<<<< HEAD
-=======
-    const double vacuumReading = getManifoldPressureWithUnits(ambientPressure);
-    if (m_isAbsolute) {
-        m_manifoldVacuumGauge->m_gauge->m_value = static_cast<float>(vacuumReading);
-    }
-    else {
-        m_manifoldVacuumGauge->m_gauge->m_value = (vacuumReading > -0.5)
-            ? 0.0f
-            : static_cast<float>(vacuumReading);
-    }
-
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
-=======
     */
     double vacuumReading = getPressureVaccuum(ambientPressure);
     if (isAbsolute)
@@ -501,7 +448,6 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
         ? 0.0f
         : (float)vacuumReading;
 
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     const double rpm = std::fmax(m_engine->getRpm(), 0.0);
     const double theoreticalAirPerRevolution =
@@ -533,39 +479,6 @@ void RightGaugeCluster::renderFuelAirCluster(const Bounds &bounds) {
     m_volumetricEffGauge->m_gauge->m_value = 100.0f * (float)volumetricEfficiency;
 }
 
-<<<<<<< HEAD
-double RightGaugeCluster::getManifoldPressureWithUnits(double ambientPressure) {
-    if (m_pressureUnits == "inHg") {
-        return units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::inHg);
-    }
-    else if (m_pressureUnits == "kPa") {
-        return units::convert(m_engine->getManifoldPressure(), units::kPa);
-    }
-    else if (m_pressureUnits == "mbar") {
-        return units::convert(m_engine->getManifoldPressure(), units::mbar);
-    }
-    else if (m_pressureUnits == "bar") {
-        return units::convert(m_engine->getManifoldPressure(), units::bar);
-    }
-    else if (m_pressureUnits == "psi") {
-        return units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::psi);
-    }
-    else {
-        return units::convert(std::fmin(m_engine->getManifoldPressure() - ambientPressure, 0.0), units::inHg);
-    }
-}
-
-void RightGaugeCluster::setUnits() {
-    constexpr float shortenAngle = (float)units::angle(1.0, units::deg);
-
-    m_speedometer->m_unit = (m_speedUnits == "mph")
-        ? "mph"
-        : "kph";
-
-    if (m_pressureUnits == "kPa") {
-        m_isAbsolute = true;
-
-=======
 double RightGaugeCluster::getPressureVaccuum(double ambientPressure)
 {
     double vacuumReading = 0;
@@ -621,7 +534,6 @@ void RightGaugeCluster::setUnits()
     else if (m_pressureUnits == "KPA")
     {
         isAbsolute = true;
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_unit = "kPa";
         m_manifoldVacuumGauge->m_gauge->m_min = 0;
         m_manifoldVacuumGauge->m_gauge->m_max = 110;
@@ -630,29 +542,17 @@ void RightGaugeCluster::setUnits()
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getRed(), 110, 90, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-=======
             { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getOrange(), 30, 40, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getBlue(), 15, 29, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), 0, 14, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
-    }
-    else if (m_pressureUnits == "mbar") {
-        m_isAbsolute = true;
-
-=======
             { m_app->getWhite(), 0, 14, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
     }
     else if (m_pressureUnits == "MBAR")
     {
         isAbsolute = true;
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_unit = "mbar";
         m_manifoldVacuumGauge->m_gauge->m_min = 0;
         m_manifoldVacuumGauge->m_gauge->m_max = 1100;
@@ -661,31 +561,18 @@ void RightGaugeCluster::setUnits()
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getRed(), 1100, 900, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-=======
             { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getOrange(), 300, 400, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getBlue(), 150, 290, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), 0, 140, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
-    }
-    else if (m_pressureUnits == "bar") {
-        m_isAbsolute = true;
-
-        m_manifoldVacuumGauge->m_unit = "bar";
-=======
             { m_app->getWhite(), 0, 140, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
     }
     else if (m_pressureUnits == "BAR")
     {
         isAbsolute = true;
         m_manifoldVacuumGauge->m_unit = "BAR";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->m_min = 0;
         m_manifoldVacuumGauge->m_gauge->m_max = 1.1f;
         m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
@@ -695,30 +582,17 @@ void RightGaugeCluster::setUnits()
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getRed(), 0.8f, 1.1f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-=======
             { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getOrange(), 0.3f, 0.5f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getBlue(), 0.15f, 0.29f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), 0, 0.14f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
-    }
-    else if (m_pressureUnits == "psi") {
-        m_isAbsolute = false;
-
-        m_manifoldVacuumGauge->m_unit = "psi";
-=======
             { m_app->getWhite(), 0, 0.14f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
     }
     else if (m_pressureUnits == "PSI")
     {
         m_manifoldVacuumGauge->m_unit = "PSI";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->m_min = -15;
         m_manifoldVacuumGauge->m_gauge->m_max = 3;
         m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
@@ -727,43 +601,14 @@ void RightGaugeCluster::setUnits()
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getRed(), -4, 1, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-=======
             { m_app->getWhite(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getOrange(), -7, -4, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
         m_manifoldVacuumGauge->m_gauge->setBand(
             { m_app->getBlue(), -12, -7, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
         m_manifoldVacuumGauge->m_gauge->setBand(
-<<<<<<< HEAD
-            { m_app->getForegroundColor(), -15, -12, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
-    }
-    else {
-        m_isAbsolute = false;
-
-        m_manifoldVacuumGauge->m_unit = "inHg";
-        m_manifoldVacuumGauge->m_gauge->m_min = -30;
-        m_manifoldVacuumGauge->m_gauge->m_max = 5;
-        m_manifoldVacuumGauge->m_gauge->m_minorStep = 1;
-        m_manifoldVacuumGauge->m_gauge->m_majorStep = 5;
-        m_manifoldVacuumGauge->m_gauge->setBand(
-            { m_app->getRed(), -5, -1, 3.0f, 6.0f, shortenAngle, shortenAngle }, 0);
-        m_manifoldVacuumGauge->m_gauge->setBand(
-            { m_app->getForegroundColor(), -1.0f, 1.0f, 3.0f, 6.0f, shortenAngle, shortenAngle }, 1);
-        m_manifoldVacuumGauge->m_gauge->setBand(
-            { m_app->getOrange(), -10, -5, 3.0f, 6.0f, shortenAngle, shortenAngle }, 2);
-        m_manifoldVacuumGauge->m_gauge->setBand(
-            { m_app->getBlue(), -22, -10, 3.0f, 6.0f, shortenAngle, shortenAngle }, 3);
-        m_manifoldVacuumGauge->m_gauge->setBand(
-            { m_app->getForegroundColor(), -30, -22, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
-    }
-}
-=======
             { m_app->getWhite(), -15, -12, 3.0f, 6.0f, shortenAngle, shortenAngle }, 4);
     }
     else
         m_manifoldVacuumGauge->m_unit = "inHg";
 }
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5

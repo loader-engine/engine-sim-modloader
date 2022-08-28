@@ -81,10 +81,7 @@ add_library(engine-sim STATIC
     src/cylinder_bank.cpp
     src/cylinder_head.cpp
     src/derivative_filter.cpp
-<<<<<<< HEAD
     src/direct_throttle_linkage.cpp
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     src/dynamometer.cpp
     src/engine.cpp
     src/exhaust_system.cpp
@@ -94,10 +91,7 @@ add_library(engine-sim STATIC
     src/function.cpp
     src/gas_system.cpp
     src/gaussian_filter.cpp
-<<<<<<< HEAD
     src/governor.cpp
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     src/ignition_module.cpp
     src/impulse_response.cpp
     src/intake.cpp
@@ -110,10 +104,7 @@ add_library(engine-sim STATIC
     src/standard_valvetrain.cpp
     src/starter_motor.cpp
     src/synthesizer.cpp
-<<<<<<< HEAD
     src/throttle.cpp
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     src/transmission.cpp
     src/utilities.cpp
     src/valvetrain.cpp
@@ -132,10 +123,7 @@ add_library(engine-sim STATIC
     include/cylinder_bank.h
     include/cylinder_head.h
     include/derivative_filter.h
-<<<<<<< HEAD
     include/direct_throttle_linkage.h
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     include/dynamometer.h
     include/engine.h
     include/exhaust_system.h
@@ -145,10 +133,7 @@ add_library(engine-sim STATIC
     include/function.h
     include/gas_system.h
     include/gaussian_filter.h
-<<<<<<< HEAD
     include/governor.h
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     include/ignition_module.h
     include/impulse_response.h
     include/intake.h
@@ -161,10 +146,7 @@ add_library(engine-sim STATIC
     include/standard_valvetrain.h
     include/starter_motor.h
     include/synthesizer.h
-<<<<<<< HEAD
     include/throttle.h
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     include/transmission.h
     include/units.h
     include/utilities.h
@@ -216,18 +198,11 @@ if (PIRANHA_ENABLED)
         scripting/include/piranha.h
         scripting/include/piston_node.h
         scripting/include/rod_journal_node.h
-<<<<<<< HEAD
         scripting/include/standard_valvetrain_node.h
         scripting/include/transmission_node.h
         scripting/include/valvetrain_node.h
         scripting/include/vtec_valvetrain_node.h
 		scripting/include/vehicle_node.h
-=======
-        scripting/include/set_application_settings_node.h
-        scripting/include/standard_valvetrain_node.h
-        scripting/include/valvetrain_node.h
-        scripting/include/vtec_valvetrain_node.h
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     )
 
     target_include_directories(engine-sim-script-interpreter

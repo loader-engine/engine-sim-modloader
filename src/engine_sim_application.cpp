@@ -26,11 +26,7 @@
 #endif
 
 std::string EngineSimApplication::s_buildVersion = "0.1.9a";
-<<<<<<< HEAD
-std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
-=======
 std::string EngineSimApplication::s_modLoaderVersion = "0.0.4a";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
@@ -212,18 +208,11 @@ void EngineSimApplication::initialize() {
     }
     else {
         m_iceEngine = nullptr;
-<<<<<<< HEAD
-<<<<<<< HEAD
-        MessageBox(NULL, "Compiler failed to compile main.mr file!", NULL, MB_OK);
-=======
-        m_vehicle = nullptr;
-        m_transmission = nullptr;
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
-=======
         Logger::DebugLine("Failed to compile main.mr");
         MessageBox(NULL, "I'm sorry, the compiler failed to compile the main.mr file.\nI'm not sure what you did wrong, but please check the error log for more info.\nThank you.", NULL, MB_OK);
+        m_vehicle = nullptr;
+        m_transmission = nullptr;
         exit(1);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     }
 
     compiler.destroy();
@@ -337,20 +326,11 @@ void EngineSimApplication::initialize() {
     // Enable it, this needs to be set via a config file of some sort. 
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
-<<<<<<< HEAD
-<<<<<<< HEAD
-    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " Mods loaded: " + getModAmount(), s_buildVersion + " | " + s_modLoaderVersion);
-=======
     GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 #endif
 
     luaLoadConfig(luaScriptsPath);
 
-=======
-    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName(), s_buildVersion);
-#endif /* ATG_ENGINE_DISCORD_ENABLED */
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
 }
 
 void EngineSimApplication::process(float frame_dt) {
@@ -903,18 +883,12 @@ void EngineSimApplication::drawGenerated(
 }
 
 void EngineSimApplication::configure(const ApplicationSettings &settings) {
-<<<<<<< HEAD
     m_applicationSettings = settings;
-=======
-    //Assign to the application so we can grab it in other classes.
-    m_appSettings = settings;
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     if (settings.startFullscreen) {
         m_engine.GetGameWindow()->SetWindowStyle(ysWindow::WindowStyle::Fullscreen);
     }
 
-<<<<<<< HEAD
     m_background = ysColor::srgbiToLinear(m_applicationSettings.colorBackground);
     m_foreground = ysColor::srgbiToLinear(m_applicationSettings.colorForeground);
     m_shadow = ysColor::srgbiToLinear(m_applicationSettings.colorShadow);
@@ -926,19 +900,6 @@ void EngineSimApplication::configure(const ApplicationSettings &settings) {
     m_yellow = ysColor::srgbiToLinear(m_applicationSettings.colorYellow);
     m_blue = ysColor::srgbiToLinear(m_applicationSettings.colorBlue);
     m_green = ysColor::srgbiToLinear(m_applicationSettings.colorGreen);
-=======
-    m_background = ysColor::srgbiToLinear(m_appSettings.colorBackground);
-    m_foreground = ysColor::srgbiToLinear(m_appSettings.colorForeground);
-    m_shadow = ysColor::srgbiToLinear(m_appSettings.colorShadow);
-    m_highlight1 = ysColor::srgbiToLinear(m_appSettings.colorHighlight1);
-    m_highlight2 = ysColor::srgbiToLinear(m_appSettings.colorHighlight2);
-    m_pink = ysColor::srgbiToLinear(m_appSettings.colorPink);
-    m_red = ysColor::srgbiToLinear(m_appSettings.colorRed);
-    m_orange = ysColor::srgbiToLinear(m_appSettings.colorOrange);
-    m_yellow = ysColor::srgbiToLinear(m_appSettings.colorYellow);
-    m_blue = ysColor::srgbiToLinear(m_appSettings.colorBlue);
-    m_green = ysColor::srgbiToLinear(m_appSettings.colorGreen);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 }
 
 void EngineSimApplication::createObjects(Engine *engine) {

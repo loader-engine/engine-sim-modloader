@@ -173,17 +173,6 @@ void LoadSimulationCluster::update(float dt) {
         }
         */
 
-        if (m_powerUnits == "HP")
-            ss << m_peakHorsepower << "HP @ " << m_peakHorsepowerRpm << "rpm";
-        else
-            ss << m_peakHorsepower << "KW @ " << m_peakHorsepowerRpm << "rpm";
-        ss << " | ";
-        if (m_torqueUnits == "FTLBS")
-            ss << m_peakTorque << "lb-ft @ " << m_peakTorqueRpm << "rpm";
-        else
-            ss << m_peakTorque << "Nm. @ " << m_peakTorqueRpm << "rpm";
-
-=======
         if (m_powerUnits == "hp") {
             ss << m_peakHorsepower << "hp @ " << m_peakHorsepowerRpm << "rpm";
         }
@@ -199,7 +188,6 @@ void LoadSimulationCluster::update(float dt) {
         else {
             ss << m_peakTorque << "Nm @ " << m_peakTorqueRpm << "rpm";
         }
->>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
         m_app->getInfoCluster()->setLogMessage(ss.str());
     }
 
@@ -330,7 +318,6 @@ void LoadSimulationCluster::updateHpAndTorque(float dt) {
     constexpr double RC = 1.0;
     const double alpha = dt / (dt + RC);
 
-<<<<<<< HEAD
     const double torque = m_simulator->getFilteredDynoTorque();
     const double power = torque * m_simulator->getEngine()->getSpeed();
     const double torqueWithUnits = (m_torqueUnits == "Nm") 
@@ -339,10 +326,6 @@ void LoadSimulationCluster::updateHpAndTorque(float dt) {
     const double powerWithUnits = (m_powerUnits == "kW")
         ? (units::convert(power, units::kW))
         : (units::convert(power, units::hp));
-=======
-    double torque = (m_torqueUnits == "NM") ? (units::convert(m_simulator->getFilteredDynoTorque(), units::Nm)) : (units::convert(m_simulator->getFilteredDynoTorque(), units::ft_lb));
-    const double hp = getPower(torque);
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     m_filteredTorque = (1 - alpha) * m_filteredTorque + alpha * torqueWithUnits;
     m_filteredHorsepower = (1 - alpha) * m_filteredHorsepower + alpha * powerWithUnits;
@@ -358,49 +341,16 @@ void LoadSimulationCluster::updateHpAndTorque(float dt) {
     }
 }
 
-<<<<<<< HEAD
 void LoadSimulationCluster::setUnits(){
     if (m_torqueUnits == "lb-ft") {
         m_torqueGauge->m_unit = "lb-ft";
-=======
-
-double LoadSimulationCluster::getPower(double torque)
-{
-    double power = 0;
-    if (m_powerUnits == "HP")
-    {
-        if(m_torqueUnits == "NM")
-            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
-        else
-            power = torque * m_simulator->getEngine()->getRpm() / 5252.0;
-    }
-    else if (m_powerUnits == "KW")
-    {
-        if (m_torqueUnits == "NM")
-            power = torque * m_simulator->getEngine()->getRpm() / 9549.0;
-        else
-            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
-    }
-    return power;
-}
-void LoadSimulationCluster::setUnits(){
-    //Set Torque First
-    if (m_torqueUnits == "FTLBS")
-    {
-        m_torqueGauge->m_unit = "LB-FT";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_torqueGauge->m_precision = 0;
         m_torqueGauge->m_gauge->m_min = 0;
         m_torqueGauge->m_gauge->m_max = 1000;
         m_torqueGauge->m_gauge->m_minorStep = 50;
         m_torqueGauge->m_gauge->m_majorStep = 100;
     }
-<<<<<<< HEAD
     else if (m_torqueUnits == "Nm") {
-=======
-    else if (m_torqueUnits == "NM")
-    {
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_torqueGauge->m_unit = "Nm";
         m_torqueGauge->m_precision = 1;
         m_torqueGauge->m_gauge->m_min = 0;
@@ -409,15 +359,8 @@ void LoadSimulationCluster::setUnits(){
         m_torqueGauge->m_gauge->m_majorStep = 100;
     }
 
-<<<<<<< HEAD
     if (m_powerUnits == "hp") {
         m_hpGauge->m_unit = "hp";
-=======
-    //Then Power
-    if (m_powerUnits == "HP")
-    {
-        m_hpGauge->m_unit = "HP";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_hpGauge->m_precision = 0;
 
         m_hpGauge->m_gauge->m_min = 0;
@@ -425,22 +368,12 @@ void LoadSimulationCluster::setUnits(){
         m_hpGauge->m_gauge->m_minorStep = 50;
         m_hpGauge->m_gauge->m_majorStep = 100;
     }
-<<<<<<< HEAD
     else if (m_powerUnits == "kW") {
         m_hpGauge->m_unit = "kW";
-=======
-    else if (m_powerUnits == "KW")
-    {
-        m_hpGauge->m_unit = "Kw";
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         m_hpGauge->m_precision = 1;
         m_hpGauge->m_gauge->m_min = 0;
         m_hpGauge->m_gauge->m_max = 1000;
         m_hpGauge->m_gauge->m_minorStep = 50;
         m_hpGauge->m_gauge->m_majorStep = 100;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5

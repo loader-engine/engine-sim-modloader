@@ -21,10 +21,7 @@
 #include "mixer_cluster.h"
 #include "info_cluster.h"
 #include "application_settings.h"
-<<<<<<< HEAD
 #include "transmission.h"
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
 #include "delta.h"
 #include "dtv.h"
@@ -106,11 +103,7 @@ class EngineSimApplication {
 
         Simulator *getSimulator() { return &m_simulator; }
         InfoCluster *getInfoCluster() { return m_infoCluster; }
-<<<<<<< HEAD
         ApplicationSettings* getAppSettings() { return &m_applicationSettings; }
-=======
-        ApplicationSettings* getAppSettings() { return &m_appSettings; }
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
         std::string UNIT_TYPE_TORQUE = "imperial";
         std::string UNIT_TYPE_SPEED = "imperial";
@@ -201,11 +194,7 @@ class EngineSimApplication {
         int m_screenWidth;
         int m_screenHeight;
         
-<<<<<<< HEAD
         ApplicationSettings m_applicationSettings;
-=======
-        ApplicationSettings m_appSettings;
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
         dbasic::ShaderSet m_shaderSet;
         Shaders m_shaders;
 

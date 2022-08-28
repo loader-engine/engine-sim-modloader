@@ -117,7 +117,6 @@ Crankshaft *es_script::EngineContext::getCrankshaft(CrankshaftNode *node) const 
     else return nullptr;
 }
 
-<<<<<<< HEAD
 void es_script::EngineContext::addConnectingRod(
     ConnectingRodNode *node,
     ConnectingRod *rod)
@@ -135,8 +134,6 @@ ConnectingRod *es_script::EngineContext::getConnectingRod(
     else return nullptr;
 }
 
-=======
->>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 void es_script::EngineContext::setCylinderIndex(
     const CylinderBankNode *bank,
     int localIndex,
