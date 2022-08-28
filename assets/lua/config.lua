@@ -1,8 +1,8 @@
 setVolume(50)
 setFrequency(9000)
-setAntilag(true, false)
+setAntilag(false, false)
 -- isOn = true, isOften = true
 -- isOn = true, isOften = false
 
-setMixture(true)
+setMixture(false)
 -- rich: true normal: false

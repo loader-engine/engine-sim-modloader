@@ -25,8 +25,8 @@
 #include "../discord/Discord.h"
 #endif
 
-std::string EngineSimApplication::s_buildVersion = "0.1.8a";
-std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
+std::string EngineSimApplication::s_buildVersion = "0.1.9a";
+std::string EngineSimApplication::s_modLoaderVersion = "0.0.4a";
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
@@ -762,7 +762,7 @@ void EngineSimApplication::run() {
         }
         cntdown--;
 
-        if (pop)
+        if (pop && !m_simulator.m_dyno.m_hold)
         {
             //Logger::DebugLine("POP!");
             // TODO: add some flow

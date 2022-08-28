@@ -7,17 +7,17 @@ constants constants()
 
 label cycle(2 * 360 * units.deg)
 
-public node nissan_distributor {
+public node r56_distributor {
     input wires;
     input timing_curve;
     input rev_limit: 6900 * units.rpm;
-    input limiter_duration: 0.050 * units.sec;
+    input limiter_duration: 0.100 * units.sec;
     alias output __out:
         ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
             .connect_wire(wires.wire1, (0.0/4.0) * cycle)
 			.connect_wire(wires.wire2, (2.0/4.0) * cycle)
-			.connect_wire(wires.wire3, (1.0/4.0) * cycle)
-			.connect_wire(wires.wire4, (3.0/4.0) * cycle);
+			.connect_wire(wires.wire3, (3.0/4.0) * cycle)
+			.connect_wire(wires.wire4, (1.0/4.0) * cycle);
 }
 
 private node wires {
@@ -37,35 +37,35 @@ private node add_sym_sample {
     this.add_sample(-angle * units.deg, lift * units.thou)
 }
 
-public node cg10de_lobe_profile_int {
+public node r56_lobe_profile_int {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 160 * units.deg,
+            duration_at_50_thou: 232 * units.deg,
             gamma: 1.0,
-            lift: 9.59 * units.mm,
+            lift: 8.5 * units.mm,
             steps: 100
         );
 }
 
-public node cg10de_lobe_profile_exh {
+public node r56_lobe_profile_exh {
     alias output __out:
         harmonic_cam_lobe(
-            duration_at_50_thou: 170 * units.deg,
+            duration_at_50_thou: 220 * units.deg,
             gamma: 1.0,
-            lift: 9.59 * units.mm,
+            lift: 8.5 * units.mm,
             steps: 100
         );
 }
 
-public node nissan_camshaft_builder {
-    input lobe_profile: cg10de_lobe_profile_int();
-	input ex_lobe_profile: cg10de_lobe_profile_exh();
+public node r56_camshaft_builder {
+    input lobe_profile: r56_lobe_profile_int();
+	input ex_lobe_profile: r56_lobe_profile_exh();
     input intake_lobe_profile: lobe_profile;
     input exhaust_lobe_profile: ex_lobe_profile;
-    input lobe_separation: 130.0 * units.deg;
+    input lobe_separation: 110.0 * units.deg;
     input intake_lobe_center: lobe_separation;
     input exhaust_lobe_center: 110.0 * units.deg;
-    input advance: 10.0 * units.deg;
+    input advance: 0.0 * units.deg;
     input base_radius: 0.6 * units.inch;
 
     output intake_cam_0: _intake_cam_0;
@@ -89,14 +89,14 @@ public node nissan_camshaft_builder {
     _intake_cam_0
         .add_lobe(rot360 + intake_lobe_center)
 		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
+		.add_lobe(rot360 + intake_lobe_center + 2 * rot180)
 		.add_lobe(rot360 + intake_lobe_center + 1 * rot180)
-		.add_lobe(rot360 + intake_lobe_center + 3 * rot180)
 
 	_exhaust_cam_0
         .add_lobe(rot360 - exhaust_lobe_center)
         .add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
+		.add_lobe(rot360 - exhaust_lobe_center + 2 * rot180)
 		.add_lobe(rot360 - exhaust_lobe_center + 1 * rot180)
-		.add_lobe(rot360 - exhaust_lobe_center + 3 * rot180)
 }
 
 private node add_flow_sample {
@@ -108,10 +108,10 @@ private node add_flow_sample {
     this.add_sample(lift * units.mm, k_28inH2O(flow))
 }
 
-public node nissan_cg10de_head {
+public node r56_head {
     input intake_camshaft;
     input exhaust_camshaft;
-    input chamber_volume: 33.0 * units.cc;
+    input chamber_volume: 20.0 * units.cc;
     input flip_display: false;
 	
 	input flow_attenuation: 1.0;
@@ -121,39 +121,39 @@ public node nissan_cg10de_head {
     function intake_flow(1 * units.mm)
     intake_flow
         .add_flow_sample(0 * units.mm, 0 * flow_attenuation)
-        .add_flow_sample(1 * units.mm, 17 * flow_attenuation)
-        .add_flow_sample(1.5 * units.mm, 31 * flow_attenuation)
-        .add_flow_sample(2 * units.mm, 52 * flow_attenuation)
-        .add_flow_sample(2.5 * units.mm, 65 * flow_attenuation)
-        .add_flow_sample(3 * units.mm, 70 * flow_attenuation)
-        .add_flow_sample(3.5 * units.mm, 74 * flow_attenuation)
-        .add_flow_sample(4 * units.mm, 76 * flow_attenuation)
-        .add_flow_sample(4.5 * units.mm, 78 * flow_attenuation)
-		.add_flow_sample(5 * units.mm, 79 * flow_attenuation)
-		.add_flow_sample(5.5 * units.mm, 83 * flow_attenuation)
-		.add_flow_sample(6 * units.mm, 88 * flow_attenuation)
+        .add_flow_sample(1 * units.mm, 34 * flow_attenuation)
+        .add_flow_sample(1.5 * units.mm, 62 * flow_attenuation)
+        .add_flow_sample(2 * units.mm, 104 * flow_attenuation)
+        .add_flow_sample(2.5 * units.mm, 130 * flow_attenuation)
+        .add_flow_sample(3 * units.mm, 140 * flow_attenuation)
+        .add_flow_sample(3.5 * units.mm, 148 * flow_attenuation)
+        .add_flow_sample(4 * units.mm, 152 * flow_attenuation)
+        .add_flow_sample(4.5 * units.mm, 154 * flow_attenuation)
+		.add_flow_sample(5 * units.mm, 158 * flow_attenuation)
+		.add_flow_sample(5.5 * units.mm, 166 * flow_attenuation)
+		.add_flow_sample(6 * units.mm, 172 * flow_attenuation)
 
 
 
     function exhaust_flow(1 * units.mm)
     exhaust_flow
         .add_flow_sample(0 * units.mm, 0 * flow_attenuation)
-        .add_flow_sample(1 * units.mm, 11* flow_attenuation)
-        .add_flow_sample(1.5 * units.mm, 15 * flow_attenuation)
-        .add_flow_sample(2 * units.mm, 30 * flow_attenuation)
-        .add_flow_sample(2.5 * units.mm, 38 * flow_attenuation)
-        .add_flow_sample(3 * units.mm, 43 * flow_attenuation)
-        .add_flow_sample(3.5 * units.mm, 46 * flow_attenuation)
-        .add_flow_sample(4 * units.mm, 45 * flow_attenuation)
-        .add_flow_sample(4.5 * units.mm, 44 * flow_attenuation)
-		.add_flow_sample(5 * units.mm, 42 * flow_attenuation)
-		.add_flow_sample(5.5 * units.mm, 40 * flow_attenuation)
-		.add_flow_sample(6 * units.mm, 40 * flow_attenuation)
+        .add_flow_sample(1 * units.mm, 22* flow_attenuation)
+        .add_flow_sample(1.5 * units.mm, 30 * flow_attenuation)
+        .add_flow_sample(2 * units.mm, 60 * flow_attenuation)
+        .add_flow_sample(2.5 * units.mm, 76 * flow_attenuation)
+        .add_flow_sample(3 * units.mm, 86 * flow_attenuation)
+        .add_flow_sample(3.5 * units.mm, 92 * flow_attenuation)
+        .add_flow_sample(4 * units.mm, 90 * flow_attenuation)
+        .add_flow_sample(4.5 * units.mm, 88 * flow_attenuation)
+		.add_flow_sample(5 * units.mm, 84 * flow_attenuation)
+		.add_flow_sample(5.5 * units.mm, 80 * flow_attenuation)
+		.add_flow_sample(6 * units.mm, 80 * flow_attenuation)
 		
     cylinder_head head(
         chamber_volume: chamber_volume,
-        intake_runner_volume: 412.0 * units.cc,
-        intake_runner_cross_section_area: 17.4 * units.cm2,
+        intake_runner_volume: 312.0 * units.cc,
+        intake_runner_cross_section_area: 15.4 * units.cm2,
 
         intake_port_flow: intake_flow,
         exhaust_port_flow: exhaust_flow,
@@ -163,14 +163,14 @@ public node nissan_cg10de_head {
     )
 }
 
-public node cg10de {
+public node r56 {
     alias output __out: engine;
 
     engine engine(
-        name: "Mini Cooper S R53",
+        name: "Mini Cooper S R56",
         starter_torque: 150 * units.lb_ft,
         starter_speed: 850 * units.rpm,
-        redline: 7000 * units.rpm,
+        redline: 6000 * units.rpm,
         fuel: fuel(
             max_turbulence_effect: 4.0
         )
@@ -180,8 +180,8 @@ public node cg10de {
 
     crankshaft c0(
         throw: 85.8 * units.mm / 2,
-        flywheel_mass: 6.3 * units.kg,
-        mass: 3.8 * units.kg,
+        flywheel_mass: 2.9 * units.kg,
+        mass: 2.5 * units.kg,
         friction_torque: 6.95 * units.lb_ft,
         moment_of_inertia: 0.22986844776863666,
         position_x: 0.0,
@@ -191,8 +191,8 @@ public node cg10de {
 
     rod_journal rj0(angle: 0*units.deg)
     rod_journal rj1(angle: 180*units.deg)
-    rod_journal rj2(angle: 360*units.deg)
-    rod_journal rj3(angle: 540*units.deg)
+    rod_journal rj2(angle: 540*units.deg)
+    rod_journal rj3(angle: 360*units.deg)
 	
     c0
         .add_rod_journal(rj0)
@@ -203,7 +203,7 @@ public node cg10de {
     piston_parameters piston_params(
         mass: 280 * units.g,
         //blowby: k_28inH2O(0.1),
-        compression_height: 27.72 * units.mm,
+        compression_height: 31.3 * units.mm,
         wrist_pin_position: 0.0,
         displacement: 0.0000
     )
@@ -217,26 +217,27 @@ public node cg10de {
 
     cylinder_bank_parameters bank_params(
         bore: 77 * units.mm,
-        deck_height: (200.0 + 1) * units.mm
+        deck_height: (204.5062003319999917 + 1) * units.mm
     )
 
     performer_rpm_intake intake(
-        carburetor_cfm: 200.0,
-        idle_flow_rate_cfm: 0.0,
-        idle_throttle_plate_position: 0.99, // start at 0.96, go to -> 0.97
+        carburetor_cfm: 380.0,
+        idle_flow_rate_cfm: 0.1,
+        idle_throttle_plate_position: 0.975, // start at 0.96, go to -> 0.97
         throttle_gamma: 1.0
     )
 
     exhaust_system_parameters es_params(
         outlet_flow_rate: k_carb(1000.0),
-        primary_tube_length: 10 * units.inch,
+        primary_tube_length: 26.2 * units.inch,
         primary_flow_rate: k_carb(500.0),
-        velocity_decay: 1.0, //0.5
-        volume: 100 * units.L
+        velocity_decay: 0.5, //0.5
+        volume: 4.332 * units.L
     )
 
 
-    exhaust_system exhaust0(es_params, audio_volume: 0.7, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust0(es_params, audio_volume: 1.0, impulse_response: ir_lib.default_0)
+    exhaust_system exhaust1(es_params, audio_volume: 1.0, impulse_response: ir_lib.default_0)
  
     cylinder_bank b0(bank_params, angle: 0 * units.deg)
     b0
@@ -253,7 +254,7 @@ public node cg10de {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj2,
             intake: intake,
-            exhaust_system: exhaust0,
+            exhaust_system: exhaust1,
             ignition_wire: wires.wire2
         )
 		.add_cylinder(
@@ -269,7 +270,7 @@ public node cg10de {
             connecting_rod: connecting_rod(cr_params),
             rod_journal: rj3,
             intake: intake,
-            exhaust_system: exhaust0,
+            exhaust_system: exhaust1,
             ignition_wire: wires.wire4
         )
 
@@ -278,13 +279,13 @@ public node cg10de {
 
     engine.add_crankshaft(c0)
 
-    nissan_camshaft_builder camshaft(
-	    lobe_profile: cg10de_lobe_profile_int(),
-		ex_lobe_profile: cg10de_lobe_profile_exh()
+    r56_camshaft_builder camshaft(
+	    lobe_profile: r56_lobe_profile_int(),
+		ex_lobe_profile: r56_lobe_profile_exh()
 	)
 
     b0.set_cylinder_head (
-        nissan_cg10de_head(
+        r56_head(
             intake_camshaft: camshaft.intake_cam_0,
             exhaust_camshaft: camshaft.exhaust_cam_0
         )
@@ -293,18 +294,20 @@ public node cg10de {
     function timing_curve(1000 * units.rpm)
     timing_curve
         .add_sample(0000 * units.rpm, 2 * units.deg)
-        .add_sample(1000 * units.rpm, 16 * units.deg)
-        .add_sample(2000 * units.rpm, 16 * units.deg)
-        .add_sample(3000 * units.rpm, 16 * units.deg)
+        .add_sample(1000 * units.rpm, 15 * units.deg)
+        .add_sample(2000 * units.rpm, 15 * units.deg)
+        .add_sample(3000 * units.rpm, 15 * units.deg)
         .add_sample(4000 * units.rpm, 16 * units.deg)
-        .add_sample(5000 * units.rpm, 16 * units.deg)
-        .add_sample(6000 * units.rpm, 16 * units.deg)
-        .add_sample(7000 * units.rpm, 16 * units.deg)
+        .add_sample(5000 * units.rpm, 17 * units.deg)
+        .add_sample(6000 * units.rpm, 18 * units.deg)
+        .add_sample(7000 * units.rpm, 19 * units.deg)
+		.add_sample(8000 * units.rpm, 20 * units.deg)
 
     engine.add_ignition_module(
-        nissan_distributor(
+        r56_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 6900 * units.rpm
+            rev_limit: 6900 * units.rpm,
+            limiter_duration: 0.100 * units.sec
         ))
 }
