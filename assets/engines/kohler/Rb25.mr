@@ -45,7 +45,7 @@ public node Rb25_lobe_profile_int {
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
             gamma: 0.8,
-            lift: 7.8 * units.mm,
+            lift: 10.8 * units.mm,
             steps: 100
         );
 }
@@ -55,7 +55,7 @@ public node Rb25_lobe_profile_exh {
         harmonic_cam_lobe(
             duration_at_50_thou: 240 * units.deg,
             gamma: 0.8,
-            lift: 7.8 * units.mm,
+            lift: 10.8 * units.mm,
             steps: 100
         );
 }
@@ -188,9 +188,9 @@ public node Nissan_Rb25 {
     wires wires()
 
     crankshaft c0(
-        throw: 71.7 * units.mm / 2,
+        throw: 90.7 * units.mm / 2,
         flywheel_mass: 5.9 * units.kg,
-        mass: 5 * units.kg,
+        mass: 4 * units.kg,
         friction_torque: 10.0 * units.lb_ft,
         moment_of_inertia: 0.22986844776863666 * 0.9,
         position_x: 0.0,
@@ -214,7 +214,7 @@ public node Nissan_Rb25 {
         .add_rod_journal(rj5)
 
     piston_parameters piston_params(
-        mass: 280 * units.g,
+        mass: 200 * units.g,
         //blowby: k_28inH2O(0.1),
         compression_height: 31.82 * units.mm,
         wrist_pin_position: 0.0,
@@ -222,7 +222,7 @@ public node Nissan_Rb25 {
     )
 
     connecting_rod_parameters cr_params(
-        mass: 300.0 * units.g,
+        mass: 250.0 * units.g,
         moment_of_inertia: 0.0015884918028487504,
         center_of_mass: 0.0,
         length: 135.0 * units.mm
@@ -236,7 +236,7 @@ public node Nissan_Rb25 {
     performer_rpm_intake intake(
         carburetor_cfm: 550.0,
         idle_flow_rate_cfm: 0.1,
-        idle_throttle_plate_position: 0.9385,
+        idle_throttle_plate_position: 0.938,
         throttle_gamma: 2.0
     )
 

@@ -186,7 +186,7 @@ public node chev_truck_454 {
         chevy_bbc_distributor(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 7000 * units.rpm
+            rev_limit: 7500 * units.rpm
         )
     )
 }

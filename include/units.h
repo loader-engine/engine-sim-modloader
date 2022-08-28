@@ -70,8 +70,13 @@ namespace units {
     extern constexpr double MPa = Pa * 1000000.0;
     extern constexpr double atm = 101.325 * kPa;
 
+<<<<<<< HEAD
     extern constexpr double mbar = Pa * 100.0;
     extern constexpr double bar = mbar * 1000.0;
+=======
+    extern constexpr double mBar = Pa * 100.0;
+    extern constexpr double Bar = mBar * 1000.0;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     extern constexpr double psi = lbf / (inch * inch);
     extern constexpr double psig = psi;

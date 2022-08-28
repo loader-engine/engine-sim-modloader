@@ -26,7 +26,11 @@
 #endif
 
 std::string EngineSimApplication::s_buildVersion = "0.1.9a";
+<<<<<<< HEAD
 std::string EngineSimApplication::s_modLoaderVersion = "0.0.3a";
+=======
+std::string EngineSimApplication::s_modLoaderVersion = "0.0.4a";
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
@@ -198,6 +202,7 @@ void EngineSimApplication::initialize() {
     compiler.initialize();
     const bool compiled = compiler.compile("../assets/main.mr");
     if (compiled) {
+        Logger::DebugLine("Compiled main.mr file");
         const es_script::Compiler::Output output = compiler.execute();
         configure(output.applicationSettings);
 
@@ -208,11 +213,17 @@ void EngineSimApplication::initialize() {
     else {
         m_iceEngine = nullptr;
 <<<<<<< HEAD
+<<<<<<< HEAD
         MessageBox(NULL, "Compiler failed to compile main.mr file!", NULL, MB_OK);
 =======
         m_vehicle = nullptr;
         m_transmission = nullptr;
 >>>>>>> 6c6b4f317473b728d8a6c0cc64d0644b445bd355
+=======
+        Logger::DebugLine("Failed to compile main.mr");
+        MessageBox(NULL, "I'm sorry, the compiler failed to compile the main.mr file.\nI'm not sure what you did wrong, but please check the error log for more info.\nThank you.", NULL, MB_OK);
+        exit(1);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
     }
 
     compiler.destroy();
@@ -327,7 +338,11 @@ void EngineSimApplication::initialize() {
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
 <<<<<<< HEAD
+<<<<<<< HEAD
     GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " Mods loaded: " + getModAmount(), s_buildVersion + " | " + s_modLoaderVersion);
+=======
+    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 #endif
 
     luaLoadConfig(luaScriptsPath);
@@ -467,6 +482,7 @@ float EngineSimApplication::unitsToPixels(float units) const {
     return units * f;
 }
 
+int cntdown = 0;
 void EngineSimApplication::run() {
     double speedSetting = 1.0;
     double targetSpeedSetting = 1.0;
@@ -775,6 +791,52 @@ void EngineSimApplication::run() {
 
         if (!m_paused || m_engine.ProcessKeyDown(ysKey::Code::Right)) {
             process(m_engine.GetFrameLength());
+            luaTick(m_engine.GetFrameLength());
+        }
+
+        bool pop = false;
+        //Logger::DebugLine(std::to_string(m_simulator.getEngine()->getThrottlePlateAngle()));
+        if (m_simulator.getEngine()->getIntakeAfr() < 12 && m_simulator.getEngine()->getRpm() >= 2500 && m_simulator.getEngine()->getThrottle() == 1)
+        {
+            if (cntdown <= 0)
+            {
+                pop = true;
+                if (often)
+                {
+                    cntdown = rand() % 10;
+                    if (cntdown < 2)
+                        cntdown = 2;
+                }
+                else
+                {
+                    cntdown = rand() % 20;
+                    if (cntdown < 6)
+                        cntdown = 6;
+                }
+            }
+        }
+        else if (m_simulator.getEngine()->getIgnitionModule()->m_revLimitTimer > 0)
+        {
+            if (cntdown <= 0)
+            {
+                pop = true;
+                cntdown = 4;
+            }
+        }
+        cntdown--;
+
+        if (pop && !m_simulator.m_dyno.m_hold)
+        {
+            //Logger::DebugLine("POP!");
+            // TODO: add some flow
+            //for(int i = 0; i < m_simulator.getEngine()->getExhaustSystemCount(); i++)
+            //    m_simulator.getEngine()->getExhaustSystem(i)->m_flow += (rand() % 100);
+            double data = 23425345.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
+            data = 16342324.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
+            data = 12416654.0;
+            m_simulator.getSynthesizer()->writeInput(&data);
         }
 
         m_uiManager.update(m_engine.GetFrameLength());
@@ -841,12 +903,18 @@ void EngineSimApplication::drawGenerated(
 }
 
 void EngineSimApplication::configure(const ApplicationSettings &settings) {
+<<<<<<< HEAD
     m_applicationSettings = settings;
+=======
+    //Assign to the application so we can grab it in other classes.
+    m_appSettings = settings;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     if (settings.startFullscreen) {
         m_engine.GetGameWindow()->SetWindowStyle(ysWindow::WindowStyle::Fullscreen);
     }
 
+<<<<<<< HEAD
     m_background = ysColor::srgbiToLinear(m_applicationSettings.colorBackground);
     m_foreground = ysColor::srgbiToLinear(m_applicationSettings.colorForeground);
     m_shadow = ysColor::srgbiToLinear(m_applicationSettings.colorShadow);
@@ -858,6 +926,19 @@ void EngineSimApplication::configure(const ApplicationSettings &settings) {
     m_yellow = ysColor::srgbiToLinear(m_applicationSettings.colorYellow);
     m_blue = ysColor::srgbiToLinear(m_applicationSettings.colorBlue);
     m_green = ysColor::srgbiToLinear(m_applicationSettings.colorGreen);
+=======
+    m_background = ysColor::srgbiToLinear(m_appSettings.colorBackground);
+    m_foreground = ysColor::srgbiToLinear(m_appSettings.colorForeground);
+    m_shadow = ysColor::srgbiToLinear(m_appSettings.colorShadow);
+    m_highlight1 = ysColor::srgbiToLinear(m_appSettings.colorHighlight1);
+    m_highlight2 = ysColor::srgbiToLinear(m_appSettings.colorHighlight2);
+    m_pink = ysColor::srgbiToLinear(m_appSettings.colorPink);
+    m_red = ysColor::srgbiToLinear(m_appSettings.colorRed);
+    m_orange = ysColor::srgbiToLinear(m_appSettings.colorOrange);
+    m_yellow = ysColor::srgbiToLinear(m_appSettings.colorYellow);
+    m_blue = ysColor::srgbiToLinear(m_appSettings.colorBlue);
+    m_green = ysColor::srgbiToLinear(m_appSettings.colorGreen);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 }
 
 void EngineSimApplication::createObjects(Engine *engine) {

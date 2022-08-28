@@ -16,6 +16,10 @@
                 
                 All color variables must be set in colors.lua instead of any other file!
 
+            EVENTS:
+
+                add this plz in 7-8 hours plz
+
             FUNCTIONS:
 
                 addProcessHandler(function)
@@ -52,6 +56,15 @@
                 setFrequency(value)
                     - Sets the simulation frequency
 
+                setAntilag(on, often)
+                    - Sets the antilag setting.
+                      often - if the system fires often
+
+                setMixture(value)
+                    - Sets the mixture
+                      true: rich
+                      false: normal
+
                 setTorqueUnit(type)
                     - Sets the torque unit type (metric, imperial)
 
@@ -63,6 +76,13 @@
 
                 setPressureUnit(type)
                     - Sets the pressure unit type (metric, imperial)
+
+                setGear1(index, value)
+                    - Sets gear ratio of gear index
+
+                synthAdd(value)
+                    - Adds something to the synthetiser
+
 
             VARIABLES:
                 

@@ -232,6 +232,7 @@ void OscilloscopeCluster::signal(UiElement *element, Event event) {
 void OscilloscopeCluster::update(float dt) {
     Engine *engine = m_simulator->getEngine();
 
+<<<<<<< HEAD
     const double torque = (m_torqueUnits == "Nm")
         ? (units::convert(m_simulator->getFilteredDynoTorque(), units::Nm))
         : (units::convert(m_simulator->getFilteredDynoTorque(), units::ft_lb));
@@ -239,6 +240,12 @@ void OscilloscopeCluster::update(float dt) {
     const double power = (m_powerUnits == "kW")
         ? (units::convert(m_simulator->getDynoPower(), units::kW))
         : (units::convert(m_simulator->getDynoPower(), units::hp));
+=======
+    const double torque =
+        (m_torqueUnits == "NM") ? (units::convert(m_simulator->getFilteredDynoTorque(), units::Nm)) : (units::convert(m_simulator->getFilteredDynoTorque(), units::ft_lb));
+
+    const double hp = getPower(torque);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     m_torque = m_torque * 0.95 + 0.05 * torque;
     m_power = m_power * 0.95 + 0.05 * power;
@@ -266,7 +273,11 @@ void OscilloscopeCluster::render() {
 
     const Bounds &hpTorqueBounds = grid.get(m_bounds, 0, 3);
     renderScope(m_torqueScope, hpTorqueBounds, "Torque/Power");
+<<<<<<< HEAD
     renderScope(m_powerScope, hpTorqueBounds, "", true);
+=======
+    renderScope(m_hpScope, hpTorqueBounds, "", true);
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
     const Bounds &valveLiftBounds = grid.get(m_bounds, 2, 2);
     renderScope(m_intakeValveLiftScope, valveLiftBounds, "Valve Lift");
@@ -387,4 +398,24 @@ void OscilloscopeCluster::renderScope(
     }
 
     osc->m_bounds = bounds;
+}
+
+double OscilloscopeCluster::getPower(double torque)
+{
+    double power = 0;
+    if (m_powerUnits == "HP")
+    {
+        if (m_torqueUnits == "NM")
+            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
+        else
+            power = torque * m_simulator->getEngine()->getRpm() / 5252.0;
+    }
+    else if (m_powerUnits == "KW")
+    {
+        if (m_torqueUnits == "NM")
+            power = torque * m_simulator->getEngine()->getRpm() / 9549.0;
+        else
+            power = torque * m_simulator->getEngine()->getRpm() / 7127.0;
+    }
+    return power;
 }

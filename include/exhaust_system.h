@@ -41,6 +41,8 @@ class ExhaustSystem : public Part {
 
         inline GasSystem *getSystem() { return &m_system; }
 
+        double m_flow;
+    
     protected:
         GasSystem m_atmosphere;
         GasSystem m_system;
@@ -55,7 +57,6 @@ class ExhaustSystem : public Part {
         double m_velocityDecay;
         int m_index;
 
-        double m_flow;
 };
 
 #endif /* ATG_ENGINE_SIM_EXHAUST_SYSTEM_H */

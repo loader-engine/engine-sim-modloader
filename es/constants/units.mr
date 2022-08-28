@@ -98,6 +98,7 @@ public node units {
 
     // Speed
     output mph: mile / hour;
+<<<<<<< HEAD
 }
 
 public node unit_names {
@@ -128,4 +129,6 @@ public node unit_names {
     output kW: "kW";
     output horsepower: hp;
     output kilowatt: kW;
+=======
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 }

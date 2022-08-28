@@ -29,9 +29,12 @@ public node ignition_wire_channel => __engine_sim__ignition_wire_channel { /* vo
 public node fuel_channel => __engine_sim__fuel_channel { /* void */ }
 public node impulse_response_channel => __engine_sim__impulse_response_channel { /* void */ }
 public node valvetrain_channel => __engine_sim__valvetrain_channel { /* void */ }
+<<<<<<< HEAD
 public node vehicle_channel => __engine_sim__vehicle_channel { /* void */ }
 public node transmission_channel => __engine_sim__transmission_channel { /* void */ }
 public node throttle_channel => __engine_sim__throttle_channel { /* void */ }
+=======
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
 private node turbulence_to_flame_speed_ratio_default {
     alias output __out:

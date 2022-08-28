@@ -61,6 +61,8 @@ class Intake : public Part {
         double addPress = 0;
         double addFlow = 0;
 
+        bool rich = false;
+
     protected:
         double m_crossSectionArea;
         double m_inputFlowK;

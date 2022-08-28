@@ -21,6 +21,8 @@ class OscilloscopeCluster : public UiElement {
         virtual void update(float dt);
         virtual void render();
 
+        double getPower(double torque);
+
         void sample();
         void setSimulator(Simulator *simulator);
 
@@ -62,7 +64,11 @@ class OscilloscopeCluster : public UiElement {
         float m_updateTimer;
 
         double m_torque;
+<<<<<<< HEAD
         double m_power;
+=======
+        double m_hp;
+>>>>>>> 6c8f1480d74aeef8c17a78ee6427407f2a8d02e5
 
         std::string m_powerUnits;
         std::string m_torqueUnits;
