@@ -7,8 +7,10 @@
                                                   __/ |             
                                                  |___/              
 
-                A mod loader for the engine-sim project
-                   By ange-yaghi aka. AngeTheGreat
+                        A mod loader for 
+        The engine-sim project by ange-yaghi aka. AngeTheGreat
+
+                      Modloader by DDev247
 
         LUA DOCUMENTATION:
 
@@ -18,12 +20,19 @@
 
             EVENTS:
 
-                add this plz in 7-8 hours plz
+                process():
+                    - runs on 60FPS
+                
+                start():
+                    - runs on start (not useful)
 
             FUNCTIONS:
 
                 addProcessHandler(function)
                     - Adds a handler for the process() function.
+
+                addStartHandler(function)
+                    - Adds a handler for the start() function.
 
                 trace(message)
                     - Logs the message in debug console in VS.

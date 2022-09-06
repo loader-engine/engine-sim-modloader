@@ -1,4 +1,4 @@
-setVolume(50)
+setVolume(100)
 setFrequency(9000)
 setAntilag(false, false)
 -- isOn = true, isOften = true
