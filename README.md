@@ -1,5 +1,6 @@
 # Engine Simulator Mod loader
 ![Alt text](docs/public/loaderFullHD.png?raw=true)
+=======
 ---
 ## **Warning: project is in development and will change frequently**
 ## Please read the full readme before complaining on discord
@@ -19,7 +20,7 @@ You install it like normally. All the lua files must be located in `assets/lua`!
 Original:  
 This is a code repository and might not look like other software that you're used to downloading and installing (if you're not familiar with programming). To download a ready-to-use version of the application, navigate to the [releases page](https://github.com/ange-yaghi/engine-sim/releases), find the most recent release (ex. `v0.1.5a`), click "Assets" and download the .zip file with a name that starts with `engine-sim-build`. Unzip this file, then run `bin/engine-sim-app.exe`. The simulator should then start normally.
 
-## How do I build it? (Ignore this section if you're not a developer and you want to use the loader!)
+## How do I build it? (Ignore this section if you're not a developer!)
 **Note: this project currently only builds on Windows!**
 
 ### Step 1 - Clone the repository

@@ -3,7 +3,7 @@ import "engine_sim.mr"
 //import "engines/kohler/kohler_ch750.mr"
 
 //import "engines/kohler/kohler_ch750_Sport.mr"
-import "engines/kohler/kohler_V8.mr"
+//import "engines/kohler/kohler_V8.mr"
 //import "engines/kohler/kohler_V12.mr"
 
 /*
@@ -17,9 +17,10 @@ import "engines/mini/r56.mr"
 */
 
 import "themes/default.mr"
+import "engines/audi/i5.mr"
 
 use_default_theme()
 
 set_engine(
-    engine: kohler_V8()
+    audi_i5_2_2L()
 )

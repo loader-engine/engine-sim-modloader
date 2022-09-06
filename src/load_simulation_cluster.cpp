@@ -139,7 +139,7 @@ void LoadSimulationCluster::update(float dt) {
     UiElement::update(dt);
 
     const float systemStatuses[] = {
-        m_simulator->getEngine()->getIgnitionModule()->m_enabled ? 1.0f : 0.01f,
+        isIgnitionOn() ? 1.0f : 0.01f,
         m_simulator->m_starterMotor.m_enabled ? 1.0f : 0.01f,
         m_simulator->m_dyno.m_enabled ? 1.0f : 0.01f,
         m_simulator->m_dyno.m_hold ? (m_simulator->m_dyno.m_enabled ? 1.0f : 0.25f) : 0.01f
@@ -212,8 +212,10 @@ void LoadSimulationCluster::render() {
        (float)units::toRpm(std::abs(m_simulator->m_dyno.m_rotationSpeed));
     m_dynoSpeedGauge->m_bounds = dynoSpeedBounds;
 
+    Engine *engine = m_simulator->getEngine();
+
     constexpr float shortenAngle = (float)units::angle(1.0, units::deg);
-    const double redline = units::toRpm(m_simulator->getEngine()->getRedline());
+    const double redline = units::toRpm((engine != nullptr) ? engine->getRedline() : 0);
     const double maxRpm = std::floor(redline / 500.0) * 500.0;
     m_dynoSpeedGauge->m_gauge->m_max = (int)(maxRpm);
     m_dynoSpeedGauge->m_gauge->setBandCount(1);
@@ -253,7 +255,9 @@ void LoadSimulationCluster::drawCurrentGear(const Bounds &bounds) {
     drawFrame(bounds, 1.0f, m_app->getForegroundColor(), m_app->getBackgroundColor());
     drawCenteredText("Gear", title.inset(10.0f), 24.0f);
 
-    const int gear = m_simulator->getTransmission()->getGear();
+    const int gear = (getTransmission() != nullptr)
+        ? getTransmission()->getGear()
+        : -1;
     std::stringstream ss;
     
     if (gear != -1) ss << (gear + 1);
@@ -264,8 +268,9 @@ void LoadSimulationCluster::drawCurrentGear(const Bounds &bounds) {
 
 void LoadSimulationCluster::drawClutchPressureGauge(const Bounds &bounds) {
     m_clutchPressureGauge->m_bounds = bounds;
-    m_clutchPressureGauge->m_gauge->m_value =
-        (float)m_simulator->getTransmission()->getClutchPressure() * 100.0f;
+    m_clutchPressureGauge->m_gauge->m_value = (getTransmission() != nullptr)
+        ? (float)getTransmission()->getClutchPressure() * 100.0f
+        : 0.0f;
 }
 
 void LoadSimulationCluster::drawSystemStatus(const Bounds &bounds) {
@@ -318,8 +323,8 @@ void LoadSimulationCluster::updateHpAndTorque(float dt) {
     const double alpha = dt / (dt + RC);
 
     const double torque = m_simulator->getFilteredDynoTorque();
-    const double power = torque * m_simulator->getEngine()->getSpeed();
-    const double torqueWithUnits = (m_torqueUnits == "Nm") 
+    const double power = m_simulator->getDynoPower();
+    const double torqueWithUnits = (m_torqueUnits == "Nm")
         ? (units::convert(torque, units::Nm))
         : (units::convert(torque, units::ft_lb));
     const double powerWithUnits = (m_powerUnits == "kW")
@@ -329,15 +334,24 @@ void LoadSimulationCluster::updateHpAndTorque(float dt) {
     m_filteredTorque = (1 - alpha) * m_filteredTorque + alpha * torqueWithUnits;
     m_filteredHorsepower = (1 - alpha) * m_filteredHorsepower + alpha * powerWithUnits;
 
-    if (m_filteredTorque > m_peakTorque) {
-        m_peakTorque = m_filteredTorque;
-        m_peakTorqueRpm = m_simulator->getEngine()->getRpm();
-    }
+    if (m_simulator->getEngine() != nullptr) {
+        if (m_filteredTorque > m_peakTorque) {
+            m_peakTorque = m_filteredTorque;
+            m_peakTorqueRpm = m_simulator->getEngine()->getRpm();
+        }
 
-    if (m_filteredHorsepower > m_peakHorsepower) {
-        m_peakHorsepower = std::fmax(m_peakHorsepower, m_filteredHorsepower);
-        m_peakHorsepowerRpm = m_simulator->getEngine()->getRpm();
+        if (m_filteredHorsepower > m_peakHorsepower) {
+            m_peakHorsepower = std::fmax(m_peakHorsepower, m_filteredHorsepower);
+            m_peakHorsepowerRpm = m_simulator->getEngine()->getRpm();
+        }
     }
+}
+
+bool LoadSimulationCluster::isIgnitionOn() const {
+    Engine *engine = m_simulator->getEngine();
+    return (engine != nullptr)
+        ? engine->getIgnitionModule()->m_enabled
+        : false;
 }
 
 void LoadSimulationCluster::setUnits(){
