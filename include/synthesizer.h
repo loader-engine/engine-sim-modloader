@@ -7,6 +7,7 @@
 #include "low_pass_filter.h"
 #include "jitter_filter.h"
 #include "ring_buffer.h"
+#include "butterworth_low_pass_filter.h"
 
 #include <cinttypes>
 #include <thread>
@@ -21,9 +22,9 @@ class Synthesizer {
             float Convolution = 1.0f;
             float dF_F_mix = 0.01f;
             float InputSampleNoise = 0.5f;
-            float InputSampleNoiseFrequencyCutoff = 80000.0f;
+            float InputSampleNoiseFrequencyCutoff = 10000.0f;
             float AirNoise = 1.0f;
-            float AirNoiseFrequencyCutoff = 10000.0f;
+            float AirNoiseFrequencyCutoff = 2000.0f;
             float LevelerTarget = 30000.0f;
             float LevelerMaxGain = 1.9f;
             float LevelerMinGain = 0.00001f;
@@ -41,15 +42,16 @@ class Synthesizer {
         struct InputChannel {
             RingBuffer<float> Data;
             float *TransferBuffer = nullptr;
-            float LastInputSample = 0.0f;
+            double LastInputSample = 0.0f;
         };
 
         struct ProcessingFilters {
             ConvolutionFilter Convolution;
             DerivativeFilter Derivative;
             JitterFilter JitterFilter;
-            LowPassFilter AirNoiseLowPass;
+            ButterworthLowPassFilter<float> AirNoiseLowPass;
             LowPassFilter InputDcFilter;
+            ButterworthLowPassFilter<double> antialiasing;
         };
 
     public:
@@ -91,6 +93,7 @@ class Synthesizer {
         void setAudioParameters(const AudioParameters &params);
 
     //protected:
+        ButterworthLowPassFilter<float> m_antialiasing;
         LevelingFilter m_levelingFilter;
         InputChannel *m_inputChannels;
         AudioParameters m_audioParameters;

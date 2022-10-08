@@ -58,8 +58,7 @@ void Synthesizer::initialize(const Parameters &p) {
     m_filters = new ProcessingFilters[p.InputChannelCount];
     for (int i = 0; i < p.InputChannelCount; ++i) {
         m_filters[i].AirNoiseLowPass.setCutoffFrequency(
-            m_audioParameters.AirNoiseFrequencyCutoff);
-        m_filters[i].AirNoiseLowPass.m_dt = 1 / m_audioSampleRate;
+            m_audioParameters.AirNoiseFrequencyCutoff, m_audioSampleRate);
 
         m_filters[i].Derivative.m_dt = 1 / m_audioSampleRate;
 
@@ -70,11 +69,14 @@ void Synthesizer::initialize(const Parameters &p) {
             10,
             m_audioParameters.InputSampleNoiseFrequencyCutoff,
             m_audioSampleRate);
+
+        m_filters[i].antialiasing.setCutoffFrequency(1900.0f, m_audioSampleRate);
     }
 
     m_levelingFilter.p_target = m_audioParameters.LevelerTarget;
     m_levelingFilter.p_maxLevel = m_audioParameters.LevelerMaxGain;
     m_levelingFilter.p_minLevel = m_audioParameters.LevelerMinGain;
+    m_antialiasing.setCutoffFrequency(m_audioSampleRate * 0.45f, m_audioSampleRate);
 
     for (int i = 0; i < m_audioBufferSize; ++i) {
         m_audioBuffer.write(0);
@@ -171,7 +173,7 @@ void Synthesizer::writeInput(const double *data) {
 
     for (int i = 0; i < m_inputChannelCount; ++i) {
         RingBuffer<float> &buffer = m_inputChannels[i].Data;
-        const float lastInputSample = m_inputChannels[i].LastInputSample;
+        const double lastInputSample = m_inputChannels[i].LastInputSample;
         const size_t baseIndex = buffer.writeIndex();
         const double distance =
             inputDistance(m_inputWriteOffset, m_lastInputSampleOffset);
@@ -183,7 +185,7 @@ void Synthesizer::writeInput(const double *data) {
             const double f = s / distance;
             const double sample = lastInputSample * (1 - f) + data[i] * f;
 
-            buffer.write(static_cast<float>(sample));
+            buffer.write(m_filters[i].antialiasing.fast_f(static_cast<float>(sample)));
         }
 
         m_inputChannels[i].LastInputSample = data[i];
@@ -242,7 +244,7 @@ void Synthesizer::renderAudio() {
 
     for (int i = 0; i < m_inputChannelCount; ++i) {
         m_filters[i].AirNoiseLowPass.setCutoffFrequency(
-            static_cast<float>(m_audioParameters.AirNoiseFrequencyCutoff));
+            static_cast<float>(m_audioParameters.AirNoiseFrequencyCutoff), m_audioSampleRate);
         m_filters[i].JitterFilter.setJitterScale(m_audioParameters.InputSampleNoise);
     }
 
@@ -299,9 +301,13 @@ int16_t Synthesizer::renderAudio(int inputSample) {
         const float r_mixed =
             airNoise * r + (1 - airNoise);
 
-        const float v_in =
+        float v_in =
             f_p * dF_F_mix
             + f * r_mixed * (1 - dF_F_mix);
+        if (fpclassify(v_in) == FP_SUBNORMAL) {
+            v_in = 0;
+        }
+
         const float v =
             convAmount * m_filters[i].Convolution.f(v_in)
             + (1 - convAmount) * v_in;
@@ -309,11 +315,7 @@ int16_t Synthesizer::renderAudio(int inputSample) {
         signal += v;
     }
 
-    if (std::isnan(signal)) {
-        std::fstream f("test.txt");
-        f << "here";
-        f.close();
-    }
+    signal = m_antialiasing.fast_f(signal);
 
     m_levelingFilter.p_target = m_audioParameters.LevelerTarget;
     const float v_leveled = m_levelingFilter.f(signal) * m_audioParameters.Volume;

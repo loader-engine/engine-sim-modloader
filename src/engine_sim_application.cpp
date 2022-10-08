@@ -20,13 +20,12 @@
 #include <stdlib.h>
 #include <sstream>
 
-
 #if ATG_ENGINE_SIM_DISCORD_ENABLED
 #include "../discord/Discord.h"
 #endif
 
-std::string EngineSimApplication::s_buildVersion = "0.1.10a";
-std::string EngineSimApplication::s_modLoaderVersion = "0.0.4a";
+std::string EngineSimApplication::s_buildVersion = "0.1.11a";
+std::string EngineSimApplication::s_modLoaderVersion = "0.0.41a";
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";
@@ -209,7 +208,7 @@ void EngineSimApplication::initialize() {
     m_audioSource->SetPan(0.0f);
     m_audioSource->SetVolume(1.0f);
 
-#ifdef ATG_ENGINE_DISCORD_ENABLED
+#ifdef ATG_ENGINE_SIM_DISCORD_ENABLED
     // Create a global instance of discord-rpc
     CDiscord::CreateInstance();
 
@@ -217,14 +216,19 @@ void EngineSimApplication::initialize() {
     GetDiscordManager()->SetUseDiscord(true);
     DiscordRichPresence passMe = { 0 };
 
-    GetDiscordManager()->SetStatus(passMe, m_iceEngine->getName() + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
+    std::string engineName = (m_iceEngine != nullptr)
+        ? m_iceEngine->getName()
+        : "Broken Engine";
+
+    GetDiscordManager()->SetStatus(passMe, engineName + " | Mods loaded: " + getModAmount(), s_buildVersion + " | Mod loader: " + s_modLoaderVersion);
 #endif /* ATG_ENGINE_DISCORD_ENABLED */
 
     luaLoadConfig(luaScriptsPath);
+
 }
 
 void EngineSimApplication::process(float frame_dt) {
-    frame_dt = clamp(frame_dt, 1 / 200.0f, 1 / 30.0f);
+    frame_dt = static_cast<float>(clamp(frame_dt, 1 / 200.0f, 1 / 30.0f));
 
     double speed = 1.0 / 1.0;
     if (m_engine.IsKeyDown(ysKey::Code::N1)) {
@@ -274,6 +278,12 @@ void EngineSimApplication::process(float frame_dt) {
     SampleOffset currentLead = m_audioBuffer.offsetDelta(safeWritePosition, writePosition);
     SampleOffset newLead = m_audioBuffer.offsetDelta(safeWritePosition, targetWritePosition);
 
+    if (currentLead > 44100 * 0.5) {
+        m_audioBuffer.m_writePointer = m_audioBuffer.getBufferIndex(safeWritePosition, (int)(44100 * 0.05));
+        currentLead = m_audioBuffer.offsetDelta(safeWritePosition, m_audioBuffer.m_writePointer);
+        maxWrite = m_audioBuffer.offsetDelta(m_audioBuffer.m_writePointer, targetWritePosition);
+    }
+
     if (currentLead > newLead) {
         maxWrite = 0;
     }
@@ -313,19 +323,10 @@ void EngineSimApplication::process(float frame_dt) {
         m_audioBuffer.commitBlock(readSamples);
     }
 
-    m_performanceCluster->addAudioLatencySample(
-        m_audioBuffer.offsetDelta(m_audioSource->GetCurrentWritePosition(), m_audioBuffer.m_writePointer) / (44100 * 0.1));
     m_performanceCluster->addInputBufferUsageSample(
         (double)m_simulator.getSynthesizerInputLatency() / m_simulator.getSynthesizerInputLatencyTarget());
-
-    if (m_simulator.getEngine() != nullptr) {
-        if (m_simulator.getSynthesizerInputLatency() > m_simulator.getSynthesizerInputLatencyTarget() * 2) {
-            m_audioSource->SetMode(ysAudioSource::Mode::Stop);
-        }
-        else {
-            m_audioSource->SetMode(ysAudioSource::Mode::Loop);
-        }
-    }
+    m_performanceCluster->addAudioLatencySample(
+        m_audioBuffer.offsetDelta(m_audioSource->GetCurrentWritePosition(), m_audioBuffer.m_writePointer) / (44100 * 0.1));
 }
 
 void EngineSimApplication::render() {
@@ -1366,8 +1367,6 @@ void EngineSimApplication::renderScene() {
 
 void EngineSimApplication::refreshUserInterface() {
     m_uiManager.destroy();
-    m_uiManager.initialize(this);
-
     m_uiManager.initialize(this);
 
     m_engineView = m_uiManager.getRoot()->addElement<EngineView>();

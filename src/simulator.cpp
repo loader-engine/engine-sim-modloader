@@ -1,3 +1,5 @@
+#include "..\include\simulator.h"
+#include "..\include\simulator.h"
 #include "../include/simulator.h"
 
 #include "../include/constants.h"
@@ -12,6 +14,7 @@ Simulator::Simulator() {
     m_engine = nullptr;
     m_transmission = nullptr;
     m_vehicle = nullptr;
+    m_delayFilters = nullptr;
 
     i_steps = 0;
     m_currentIteration = 0;
@@ -31,7 +34,8 @@ Simulator::Simulator() {
     m_exhaustFlowStagingBuffer = nullptr;
 
     m_filteredEngineSpeed = 0.0;
-    m_dynoTorque = 0.0;
+    m_dynoTorqueSamples = nullptr;
+    m_lastDynoTorqueSample = 0;
 
     m_derivativeFilter.m_dt = 1.0;
 }
@@ -43,6 +47,9 @@ Simulator::~Simulator() {
     assert(m_crankshaftFrictionConstraints == nullptr);
     assert(m_system == nullptr);
     assert(m_exhaustFlowStagingBuffer == nullptr);
+    assert(m_delayFilters == nullptr);
+    assert(m_antialiasingFilters == nullptr);
+    assert(m_dynoTorqueSamples == nullptr);
 }
 
 void Simulator::initialize(const Parameters &params) {
@@ -60,6 +67,11 @@ void Simulator::initialize(const Parameters &params) {
             new atg_scs::GaussianEliminationSleSolver,
             new atg_scs::NsvOdeSolver);
         m_system = system;
+    }
+
+    m_dynoTorqueSamples = new double[DynoTorqueSamples];
+    for (int i = 0; i < DynoTorqueSamples; ++i) {
+        m_dynoTorqueSamples[i] = 0.0;
     }
 }
 
@@ -79,6 +91,7 @@ void Simulator::loadSimulation(Engine *engine, Vehicle *vehicle, Transmission *t
     m_linkConstraints = new atg_scs::LinkConstraint[linkCount];
     m_crankshaftFrictionConstraints = new atg_scs::RotationFrictionConstraint[crankCount];
     m_crankshaftLinks = new atg_scs::ClutchConstraint[crankCount - 1];
+    m_delayFilters = new DelayFilter[cylinderCount];
 
     const double ks = 5000;
     const double kd = 10;
@@ -216,6 +229,23 @@ void Simulator::releaseSimulation() {
     destroy();
 }
 
+double Simulator::getFilteredDynoTorque() const {
+    if (m_dynoTorqueSamples == nullptr) return 0;
+
+    double averageTorque = 0;
+    for (int i = 0; i < DynoTorqueSamples; ++i) {
+        averageTorque += m_dynoTorqueSamples[i];
+    }
+
+    return averageTorque / DynoTorqueSamples;
+}
+
+double Simulator::getDynoPower() const {
+    return (m_engine != nullptr)
+        ? getFilteredDynoTorque() * m_engine->getSpeed()
+        : 0;
+}
+
 double Simulator::getAverageOutputSignal() const {
     double sum = 0.0;
     for (int i = 0; i < m_engine->getExhaustSystemCount(); ++i) {
@@ -245,6 +275,16 @@ void Simulator::placeAndInitialize() {
             m_engine->getChamber(i)->getVolume(),
             units::celcius(25.0)
         );
+
+        Piston *piston = m_engine->getChamber(i)->getPiston();
+        CylinderHead *head = m_engine->getChamber(i)->getCylinderHead();
+        ExhaustSystem *exhaust = head->getExhaustSystem(piston->getCylinderIndex());
+        const double exhaustLength =
+            head->getHeaderPrimaryLength(piston->getCylinderIndex())
+            + exhaust->getLength();
+        const double speedOfSound = 343.0 * units::m / units::sec;
+        const double delay = exhaustLength / speedOfSound;
+        m_delayFilters[i].initialize(delay, 10000.0);
     }
 
     m_engine->getIgnitionModule()->reset();
@@ -314,10 +354,10 @@ void Simulator::startFrame(double dt) {
 
     const double targetLatency = getSynthesizerInputLatencyTarget(); 
     if (m_synthesizer.getLatency() < targetLatency) {
-        i_steps = (i_steps + 1) * 1.1f;
+        i_steps = static_cast<int>((i_steps + 1) * 1.1);
     }
     else if (m_synthesizer.getLatency() > targetLatency) {
-        i_steps = (i_steps - 1) * 0.9f;
+        i_steps = static_cast<int>((i_steps - 1) * 0.9);
         if (i_steps < 0) {
             i_steps = 0;
         }
@@ -356,16 +396,42 @@ bool Simulator::simulateStep() {
     const double timestep = 1.0 / m_simulationFrequency;
     m_system->process(timestep, 1);
 
-    m_dynoTorque = 0.99 * m_dynoTorque + 0.01 * m_dyno.getTorque();
-
     m_engine->update(timestep);
     m_vehicle->update(timestep);
     m_transmission->update(timestep);
 
     updateFilteredEngineSpeed(timestep);
 
+    Crankshaft *outputShaft = m_engine->getOutputCrankshaft();
+    outputShaft->resetAngle();
+
     for (int i = 0; i < m_engine->getCrankshaftCount(); ++i) {
-        m_engine->getCrankshaft(i)->resetAngle();
+        Crankshaft *shaft = m_engine->getCrankshaft(i);
+
+        // Correct drift (temporary hack)
+        shaft->m_body.theta = outputShaft->m_body.theta;
+    }
+
+    const int index =
+        static_cast<int>(std::floor(DynoTorqueSamples * outputShaft->getCycleAngle() / (4 * constants::pi)));
+    const int step = m_engine->isSpinningCw() ? 1 : -1;
+    m_dynoTorqueSamples[index] = m_dyno.getTorque();
+
+    if (m_lastDynoTorqueSample != index) {
+        for (int i = m_lastDynoTorqueSample + step; i != index; i += step) {
+            if (i >= DynoTorqueSamples) {
+                i = -1;
+                continue;
+            }
+            else if (i < 0) {
+                i = DynoTorqueSamples;
+                continue;
+            }
+
+            m_dynoTorqueSamples[i] = m_dyno.getTorque();
+        }
+
+        m_lastDynoTorqueSample = index;
     }
 
     IgnitionModule *im = m_engine->getIgnitionModule();
@@ -448,6 +514,7 @@ void Simulator::destroy() {
     if (m_crankshaftFrictionConstraints != nullptr) delete[] m_crankshaftFrictionConstraints;
     if (m_exhaustFlowStagingBuffer != nullptr) delete[] m_exhaustFlowStagingBuffer;
     if (m_system != nullptr) delete m_system;
+    if (m_delayFilters != nullptr) delete[] m_delayFilters;
 
     m_crankConstraints = nullptr;
     m_cylinderWallConstraints = nullptr;
@@ -459,6 +526,7 @@ void Simulator::destroy() {
     m_vehicle = nullptr;
     m_transmission = nullptr;
     m_engine = nullptr;
+    m_delayFilters = nullptr;
 
     m_synthesizer.destroy();
 }
@@ -489,23 +557,37 @@ void Simulator::writeToSynthesizer() {
     const double attenuation = std::min(std::abs(m_filteredEngineSpeed), 40.0) / 40.0;
     const double attenuation_3 = attenuation * attenuation * attenuation;
 
+    static double lastValveLift[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
     const double timestep = getTimestep();
     const int cylinderCount = m_engine->getCylinderCount();
     for (int i = 0; i < cylinderCount; ++i) {
         Piston *piston = m_engine->getPiston(i);
         CylinderBank *bank = piston->getCylinderBank();
         CylinderHead *head = m_engine->getHead(bank->getIndex());
+        ExhaustSystem *exhaust = head->getExhaustSystem(piston->getCylinderIndex());
+        CombustionChamber *chamber = m_engine->getChamber(i);
 
-        const double exhaustFlow =
+        const double exhaustLength =
+            head->getHeaderPrimaryLength(piston->getCylinderIndex())
+            + exhaust->getLength();
+
+        double exhaustFlow =
             attenuation_3 * 1600 * (
-                1.0 * (m_engine->getChamber(i)->m_exhaustRunnerAndPrimary.pressure() - units::pressure(1.0, units::atm))
-                + 0.1 * m_engine->getChamber(i)->m_exhaustRunnerAndPrimary.dynamicPressure(1.0, 0.0)
-                + 0.1 * m_engine->getChamber(i)->m_exhaustRunnerAndPrimary.dynamicPressure(-1.0, 0.0));
+                1.0 * (chamber->m_exhaustRunnerAndPrimary.pressure() - units::pressure(1.0, units::atm))
+                + 0.1 * chamber->m_exhaustRunnerAndPrimary.dynamicPressure(1.0, 0.0)
+                + 0.1 * chamber->m_exhaustRunnerAndPrimary.dynamicPressure(-1.0, 0.0));
+
+        lastValveLift[i] = head->exhaustValveLift(piston->getCylinderIndex());
+
+        const double delayedExhaustPulse =
+            m_delayFilters[i].fast_f(exhaustFlow);
 
         ExhaustSystem *exhaustSystem = head->getExhaustSystem(piston->getCylinderIndex());
         m_exhaustFlowStagingBuffer[exhaustSystem->getIndex()] +=
-            head->getSoundAttenuation(piston->getCylinderIndex()) 
-            * exhaustSystem->getAudioVolume() * exhaustFlow / cylinderCount;
+            head->getSoundAttenuation(piston->getCylinderIndex())
+            * (exhaustSystem->getAudioVolume() * delayedExhaustPulse / cylinderCount)
+            * (1 / (exhaustLength * exhaustLength));
     }
 
     m_synthesizer.writeInput(m_exhaustFlowStagingBuffer);

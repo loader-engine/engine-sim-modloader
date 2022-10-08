@@ -10,6 +10,7 @@
 #include "starter_motor.h"
 #include "derivative_filter.h"
 #include "vehicle_drag_constraint.h"
+#include "delay_filter.h"
 
 #include "scs.h"
 
@@ -25,6 +26,8 @@ class Simulator {
         struct Parameters {
             SystemType SystemType = SystemType::NsvOptimized;
         };
+
+        static constexpr int DynoTorqueSamples = 512;
 
     public:
         Simulator();
@@ -74,8 +77,8 @@ class Simulator {
         void setSimulationSpeed(double simSpeed) { m_simulationSpeed = simSpeed; }
         double getSimulationSpeed() const { return m_simulationSpeed; }
 
-        double getFilteredDynoTorque() const { return m_dynoTorque; }
-        double getDynoPower() const { return (m_engine != nullptr) ? m_dynoTorque * m_engine->getSpeed() : 0; }
+        double getFilteredDynoTorque() const;
+        double getDynoPower() const;
         double getAverageOutputSignal() const;
 
         Synthesizer *getSynthesizer() { return &m_synthesizer; }
@@ -96,6 +99,8 @@ class Simulator {
     protected:
         atg_scs::RigidBodySystem *m_system;
         Synthesizer m_synthesizer;
+
+        DelayFilter *m_delayFilters;
 
         atg_scs::FixedPositionConstraint *m_crankConstraints;
         atg_scs::ClutchConstraint *m_crankshaftLinks;
@@ -122,7 +127,9 @@ class Simulator {
         double m_simulationSpeed;
         double *m_exhaustFlowStagingBuffer;
         double m_filteredEngineSpeed;
-        double m_dynoTorque;
+
+        double *m_dynoTorqueSamples;
+        int m_lastDynoTorqueSample;
 };
 
 #endif /* ATG_ENGINE_SIM_SIMULATOR_H */

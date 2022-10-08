@@ -17,11 +17,7 @@ import "engines/mini/r56.mr"
 */
 
 import "themes/default.mr"
-import "engines/audi/i5.mr"
-import "engines/kohler/lawnmower.mr"
+import "engines/atg-video-2/01_subaru_ej25_eh.mr"
 
 use_default_theme()
-
-set_engine(
-    kohler_ch750()
-)
+main()
