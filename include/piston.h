@@ -48,8 +48,8 @@ class Piston : public Part {
         double m_compressionHeight;
         double m_displacement;
         double m_wristPinLocation;
-        double m_mass;
-        double m_blowby_k;
+public: double m_mass;
+protected:double m_blowby_k;
 };
 
 void Piston::setCylinderConstraint(atg_scs::LineConstraint *constraint) {

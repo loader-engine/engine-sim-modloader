@@ -18,6 +18,8 @@ int WINAPI WinMain(
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
 
+    Logger::Initialize();
+
     bool recording = false;
     int rpm = 0;
     bool on = false;
@@ -59,6 +61,7 @@ int WINAPI WinMain(
 
     application.run();
     application.destroy();
+    Logger::Finalize();
 
     return 0;
 }

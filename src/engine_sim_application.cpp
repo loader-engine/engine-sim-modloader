@@ -373,13 +373,14 @@ void EngineSimApplication::run() {
 
         if (m_engine.ProcessKeyDown(ysKey::Code::Return)) {
             m_audioSource->SetMode(ysAudioSource::Mode::Stop);
+            reloadLua(luaScriptsPath);
             loadScript();
             if (m_simulator.getEngine() != nullptr) {
                 m_audioSource->SetMode(ysAudioSource::Mode::Loop);
             }
         }
 
-        luaProcess(dt);
+        luaProcess(0);
 
         updateScreenSizeStability();
 
@@ -708,12 +709,13 @@ void EngineSimApplication::run() {
             // TODO: add some flow
             //for(int i = 0; i < m_simulator.getEngine()->getExhaustSystemCount(); i++)
             //    m_simulator.getEngine()->getExhaustSystem(i)->m_flow += (rand() % 100);
-            double data = 23425345.0;
+            /*double data = 23425345.0;
             m_simulator.getSynthesizer()->writeInput(&data);
             data = 16342324.0;
             m_simulator.getSynthesizer()->writeInput(&data);
             data = 12416654.0;
             m_simulator.getSynthesizer()->writeInput(&data);
+            data = 12321356.0;*/
         }
 
         m_uiManager.update(m_engine.GetFrameLength());

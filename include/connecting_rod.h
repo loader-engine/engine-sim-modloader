@@ -56,8 +56,8 @@ class ConnectingRod : public Part {
     protected:
         double m_centerOfMass;
         double m_length;
-        double m_m;
-        double m_I;
+public: double m_m;
+protected:double m_I;
         int m_journal;
         ConnectingRod *m_master;
         Crankshaft *m_crankshaft;

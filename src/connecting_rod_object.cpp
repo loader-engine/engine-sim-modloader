@@ -3,6 +3,7 @@
 #include "../include/engine_sim_application.h"
 #include "../include/units.h"
 #include "../include/ui_utilities.h"
+#include "../include/loader/luad.h"
 
 ConnectingRodObject::ConnectingRodObject() {
     m_connectingRod = nullptr;
@@ -82,7 +83,7 @@ void ConnectingRodObject::render(const ViewParameters *view) {
     m_app->getShaders()->SetBaseColor(color);
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("ConnectingRod"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::connectingRodModelName.c_str()),
         0x32 - layer);
 
     m_app->getShaders()->SetBaseColor(color);

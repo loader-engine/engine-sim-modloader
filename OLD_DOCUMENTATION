@@ -16,7 +16,7 @@
 
             NOTES:
                 
-                Wow, such empty
+                All color variables must be set in colors.lua instead of any other file!
 
             EVENTS:
 
@@ -26,7 +26,7 @@
                 start():
                     - runs on start (not useful)
 
-            SIMULATOR FUNCTIONS:
+            FUNCTIONS:
 
                 addProcessHandler(function)
                     - Adds a handler for the process() function.
@@ -35,46 +35,63 @@
                     - Adds a handler for the start() function.
 
                 trace(message)
-                    - Logs the message in debug console in VS and the console window.
+                    - Logs the message in debug console in VS.
+                      Later will be used to debug stuff in a console window.
 
-                es.info(message)
+                info(message)
                     - Logs the message in the info status
 
-                es.setModel(part, modelName)
-                    - Sets model of part to modelName
+                setPink(r, g, b)
+                    - Sets the pink color.
 
-                es.setTexture(part, textureName)
-                    - Sets texture(material) of part to textureName
+                setGreen(r, g, b)
+                    - Sets the green color.
 
-                es.loadTexture(textureName)
-                    - Loads the texture from assets/textures/textureName.png and makes a material
-                      Will throw an error if you try to load a texture two times
+                setYellow(r, g, b)
+                    - Sets the yellow color.
 
-                es.synthAdd(value)
-                    - Adds something to the synthetiser
+                setRed(r, g, b)
+                    - Sets the red color.
 
-            ENGINE FUNCTIONS:
-                
-                es.engine.setAntilag(on, often)
+                setOrange(r, g, b)
+                    - Sets the orange color.
+
+                setBlue(r, g, b)
+                    - Sets the blue color.
+
+                setVolume(value)
+                    - Sets the volume
+
+                setFrequency(value)
+                    - Sets the simulation frequency
+
+                setAntilag(on, often)
                     - Sets the antilag setting.
                       often - if the system fires often
 
-                es.engine.setMixture(value)
+                setMixture(value)
                     - Sets the mixture
                       true: rich
                       false: normal
 
-                es.engine.setCrankWeight(value)
-                    - Sets the crankshaft weight to value (kilograms)
+                setTorqueUnit(type)
+                    - Sets the torque unit type (metric, imperial)
 
-                es.engine.setFlywheelWeight(value)
-                    - Sets the flywheel weight to value (kilograms)
+                setSpeedUnit(type)
+                    - Sets the speed unit type (metric, imperial)
 
-                es.engine.setPistonWeight(value)
-                    - Sets the crankshaft weight to value (grams)
+                setAirflowUnit(type)
+                    - Sets the airflow unit type (metric, imperial)
 
-                es.engine.setConrodWeight(value)
-                    - Sets the conrod weight to value (grams)
+                setPressureUnit(type)
+                    - Sets the pressure unit type (metric, imperial)
+
+                setGear1(index, value)
+                    - Sets gear ratio of gear index
+
+                synthAdd(value)
+                    - Adds something to the synthetiser
+
 
             VARIABLES:
                 
@@ -85,36 +102,46 @@
                     - Input values in format:
                       "true" or "false" (string)
 
-                es.loader.Loader_Version (GET)
+                Loader_Version (GET)
                     - Gets the loader version.
                 
-                es.loader.Loader_Sim_Version (GET)
+                Loader_Sim_Version (GET)
                     - Gets the simulator version.
 
+                UI_red_R, UI_red_G, UI_red_B (GET, SET)
+                    - Gets or set the RGB Channels of the 'red' color.
+                      Available colors:
+                        - Pink
+                        - Green
+                        - Yellow
+                        - Red
+                        - Orange
+                        - Blue
 
-                es.engine.Engine_Name (GET)
+
+                Engine_Name (GET)
                     - Gets the engine name.
 
-                es.engine.Engine_RPM (GET)
+                Engine_RPM (GET)
                     - Gets the current engine RPM.
 
-                es.engine.Engine_AFR (GET)
+                Engine_AFR (GET)
                     - Gets the current engine A/F ratio.
 
-                es.engine.Engine_Throttle (GET, SET)
+                Engine_Throttle (GET, SET)
                     - Gets or sets the engine throttle.
                       NOTE: throttle 1 means the throttle is closed and 0 means opened.
 
-                es.engine.Engine_ManifoldPressure (GET, SET)
+                Engine_ManifoldPressure (GET, SET)
                     - Gets or sets the current manifold pressure (in atmospheres).
                       NOTE: set pressure is ADDED to the current pressure.
 
-                es.engine.Engine_ExhaustFlow (GET)
+                Engine_ExhaustFlow (GET)
                     - Gets the average exhaust flow.
 
-                es.engine.Engine_IntakeFlow (GET, SET)
+                Engine_IntakeFlow (GET, SET)
                     - Gets or sets the intake flow.
 
-                es.Simulator_FPS (GET)
+                Simulator_FPS (GET)
                     - Gets the current simulator FPS.
 

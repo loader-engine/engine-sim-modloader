@@ -18,9 +18,10 @@ import "engines/mini/r56.mr"
 
 import "themes/default.mr"
 import "engines/audi/i5.mr"
+import "engines/kohler/lawnmower.mr"
 
 use_default_theme()
 
 set_engine(
-    audi_i5_2_2L()
+    kohler_ch750()
 )

@@ -3,14 +3,24 @@
 
 Logger::Logger()
 {
+
+}
+
+void Logger::Initialize()
+{
+	//coutFile = std::ofstream("cout.txt");
+}
+
+void Logger::Finalize()
+{
+	//coutFile.close();
 }
 
 void Logger::Debug(std::string message)
 {
-	char* cstr = new char[message.length() + 1];
-	strcpy(cstr, message.c_str());
-	OutputDebugStringA(cstr);
-	printf(cstr);
+	OutputDebugStringA(message.c_str());
+	printf(message.c_str());
+	//coutFile << cstr;
 }
 
 void Logger::DebugLine(std::string message)

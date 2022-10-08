@@ -32,7 +32,7 @@
 
 #include <filesystem>
 
-#include "./lua/lua.hpp"
+//#include "./lua/lua.hpp"
 #include "./loader/logger.h"
 
 class EngineSimApplication {
@@ -172,11 +172,11 @@ class EngineSimApplication {
         double ratios[5];
     protected:
 
-        void loadLua(std::string luaPath);
+        void loadLua(std::string luaPath, bool first = true);
+        void reloadLua(std::string luaPath);
         void luaLoadConfig(std::string luaPath);
         void unloadLua();
         void luaFail(std::string error);
-        lua_State* L;
 
         /*
         int luaSetPink(lua_State* lua);
@@ -191,12 +191,10 @@ class EngineSimApplication {
         void luaSetInVar(ysKey::Code code, std::string* name);
 
         void luaSetupEngineVars(bool start);
-        void luaSetVar(std::string name, std::string value);
 
         void luaGetEngineVars();
         void luaGetUiVars();
         //void luaSetUiVar(std::string color);
-        std::string luaGetVar(std::string name);
 
         // LUA FUNCTIONS
         void luaProcess(float dt);

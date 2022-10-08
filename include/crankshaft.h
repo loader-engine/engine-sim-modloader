@@ -49,12 +49,12 @@ class Crankshaft : public Part {
 
         double m_tdc;
         double m_throw;
-        double m_m;
+public: double m_m;
         double m_I;
         double m_flywheelMass;
-        double m_p_x;
+protected:double m_p_x;
         double m_p_y;
-        double m_frictionTorque;
+public:double m_frictionTorque;
 };
 
 #endif /* ATG_ENGINE_SIM_CRANKSHAFT_H */

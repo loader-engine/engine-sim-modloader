@@ -3,6 +3,7 @@
 #include "../include/cylinder_bank.h"
 #include "../include/engine_sim_application.h"
 #include "../include/constants.h"
+#include "../include/loader/luad.h"
 
 CylinderHeadObject::CylinderHeadObject() {
     m_head = nullptr;
@@ -123,7 +124,7 @@ void CylinderHeadObject::render(const ViewParameters *view) {
     m_app->getShaders()->SetBaseColor(col);
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("CylinderHead"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::headModelName.c_str()),
         0x0);
     m_app->getShaders()->SetObjectTransform(T_head);
     m_app->getShaders()->SetBaseColor(m_app->getBackgroundColor());
@@ -147,9 +148,10 @@ void CylinderHeadObject::render(const ViewParameters *view) {
 
     m_app->getShaders()->SetObjectTransform(T_intakeValve);
     m_app->getShaders()->SetBaseColor(m_app->getBlue());
+    m_app->getShaders()->UseMaterial(luad::utils::getMaterialByName(luad::data::intValveTextureName));
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("Valve"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::intValveModelName.c_str()),
         0x33);
     m_app->getShaders()->SetBaseColor(m_app->getBackgroundColor());
     m_app->drawGenerated(valveRollerShadow, 0x33);
@@ -170,9 +172,10 @@ void CylinderHeadObject::render(const ViewParameters *view) {
 
     m_app->getShaders()->SetObjectTransform(T_exhaustValve);
     m_app->getShaders()->SetBaseColor(m_app->getYellow());
+    m_app->getShaders()->UseMaterial(luad::utils::getMaterialByName(luad::data::exhValveTextureName));
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("Valve"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::exhValveModelName.c_str()),
         0x33);
     m_app->getShaders()->SetBaseColor(m_app->getBackgroundColor());
     m_app->drawGenerated(valveRollerShadow, 0x33);

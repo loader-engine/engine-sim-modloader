@@ -2,6 +2,7 @@
 
 #include "../include/cylinder_bank.h"
 #include "../include/engine_sim_application.h"
+#include "../include/loader/luad.h"
 
 PistonObject::PistonObject() {
     m_piston = nullptr;
@@ -42,7 +43,7 @@ void PistonObject::render(const ViewParameters *view) {
     m_app->getShaders()->SetBaseColor(col);
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("Piston"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::pistonModelName.c_str()),
         0x32 - layer);
 
     setTransform(&m_piston->m_body);

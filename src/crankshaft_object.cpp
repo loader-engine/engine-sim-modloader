@@ -3,6 +3,7 @@
 #include "../include/cylinder_bank.h"
 #include "../include/engine_sim_application.h"
 #include "../include/ui_utilities.h"
+#include "../include/loader/luad.h"
 
 CrankshaftObject::CrankshaftObject() {
     m_crankshaft = nullptr;
@@ -41,7 +42,7 @@ void CrankshaftObject::render(const ViewParameters *view) {
         m_app->getShaders()->SetBaseColor(col);
         m_app->getEngine()->DrawModel(
             m_app->getShaders()->GetRegularFlags(),
-            m_app->getAssetManager()->GetModelAsset("Crankshaft"),
+            m_app->getAssetManager()->GetModelAsset(luad::data::crankshaftModelName.c_str()),
             0x32 - layer);
     }
 
@@ -54,13 +55,13 @@ void CrankshaftObject::render(const ViewParameters *view) {
     m_app->getShaders()->SetBaseColor(grey1);
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("CrankSnout"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::crankshaftSnoutModelName.c_str()),
         0x32);
 
     m_app->getShaders()->SetBaseColor(grey2);
     m_app->getEngine()->DrawModel(
         m_app->getShaders()->GetRegularFlags(),
-        m_app->getAssetManager()->GetModelAsset("CrankSnoutThreads"),
+        m_app->getAssetManager()->GetModelAsset(luad::data::crankshaftSnoutThreadsModelName.c_str()),
         0x32);
 }
 
