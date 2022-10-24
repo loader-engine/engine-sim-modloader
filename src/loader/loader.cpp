@@ -6,20 +6,6 @@
 
 namespace fs = std::filesystem;
 
-/*
-void EngineSimApplication::luaUI_setColors(lua_State* lua)
-{
-    SetPink(PinkR, PinkG, PinkB);
-    SetGreen(GreenR, GreenG, GreenB);
-    SetYellow(YellowR, YellowG, YellowB);
-    SetRed(RedR, RedG, RedB);
-    SetOrange(OrangeR, OrangeG, OrangeB);
-    SetBlue(BlueR, BlueG, BlueB);
-
-    Logger::DebugLine("Setting colors...");
-}
-*/
-
 int process_handlers[100];
 int start_handlers[100];
 int tick_handlers[100];
@@ -48,7 +34,11 @@ void EngineSimApplication::luaProcess(float dt) {
     for (i = 0; i < numProcessHandlers; ++i) {
         lua_rawgeti(luad::data::L, LUA_REGISTRYINDEX, process_handlers[i]);
         lua_pushnumber(luad::data::L, dt);
-        lua_pcall(luad::data::L, 1, 0, 0);
+
+        if (lua_pcall(luad::data::L, 1, 0, 0) != LUA_OK) {
+            const char* msg = lua_tostring(luad::data::L, -1);
+            luaErr(msg);
+        }
     }
 
     luaGetEngineVars();
@@ -73,10 +63,12 @@ void EngineSimApplication::luaStart() {
     int i;
     for (i = 0; i < numStartHandlers; ++i) {
         lua_rawgeti(luad::data::L, LUA_REGISTRYINDEX, start_handlers[i]);
-        lua_pcall(luad::data::L, 0, 0, 0);
-    }
 
-    //luaGetUiVars();
+        if (lua_pcall(luad::data::L, 0, 0, 0) != LUA_OK) {
+            const char* msg = lua_tostring(luad::data::L, -1);
+            luaErr(msg);
+        }
+    }
 }
 
 static int addTickHandler(lua_State* L) {
@@ -94,8 +86,16 @@ void EngineSimApplication::luaTick(float dt) {
     int i;
     for (i = 0; i < numStartHandlers; ++i) {
         lua_rawgeti(luad::data::L, LUA_REGISTRYINDEX, start_handlers[i]);
-        lua_pcall(luad::data::L, 0, 0, 0);
+        
+        if (lua_pcall(luad::data::L, 0, 0, 0) != LUA_OK) {
+            const char* msg = lua_tostring(luad::data::L, -1);
+            luaErr(msg);
+        }
     }
+}
+
+void EngineSimApplication::luaErr(std::string message) {
+    luad::utils::luaError(message);
 }
 
 void EngineSimApplication::luaSetupVars() {
@@ -223,10 +223,15 @@ void EngineSimApplication::luaSetInVar(ysKey::Code code, std::string* name) {
 void EngineSimApplication::luaSetupEngineVars(bool start) {
     if (!start) {
         Engine* engine = m_simulator.getEngine();
+        Transmission* transmission = m_simulator.getTransmission();
+        Vehicle* vehicle = m_simulator.getVehicle();
         if (engine != nullptr) {
             luad::utils::luaSetVar("Engine_Name", engine->getName());
 
             luad::utils::luaSetVar("Engine_RPM", std::to_string(engine->getRpm()));
+            luad::utils::luaSetVar("Engine_Speed", std::to_string(vehicle->getSpeed()));
+            luad::utils::luaSetVar("Engine_Redline", std::to_string(units::toRpm(engine->getRedline())));
+            luad::utils::luaSetVar("Engine_Gear", std::to_string(transmission->getGear()));
             luad::utils::luaSetVar("Engine_AFR", std::to_string(engine->getIntakeAfr()));
             luad::utils::luaSetVar("Engine_Throttle", std::to_string(engine->getThrottle()));
             luad::utils::luaSetVar("Engine_ManifoldPressure", std::to_string(engine->getManifoldPressure()));
@@ -250,79 +255,50 @@ void EngineSimApplication::luaSetupEngineVars(bool start) {
 
             luad::utils::luaSetVar("Engine_IntakeFlow", std::to_string(avg));
 
-            double* ratios = getSimulator()->getTransmission()->m_gearRatios;
-            luad::utils::luaSetVar("Engine_Gear1", std::to_string(ratios[0]));
-            luad::utils::luaSetVar("Engine_Gear2", std::to_string(ratios[1]));
-            luad::utils::luaSetVar("Engine_Gear3", std::to_string(ratios[2]));
-            luad::utils::luaSetVar("Engine_Gear4", std::to_string(ratios[3]));
-            luad::utils::luaSetVar("Engine_Gear5", std::to_string(ratios[4]));
-            luad::utils::luaSetVar("Engine_Gear6", std::to_string(ratios[5]));
-
             luad::utils::luaSetVar("Simulator_FPS", std::to_string(m_engine.GetAverageFramerate()));
         }
     }
     
+    if (m_loadSimulationCluster != nullptr) {
+        luad::utils::luaSetVar("Dyno_Torque", std::to_string(m_loadSimulationCluster->m_filteredTorque));
+        luad::utils::luaSetVar("Dyno_Power", std::to_string(m_loadSimulationCluster->m_filteredHorsepower));
+    }
+
     luad::utils::luaSetVar("Loader_Version", getModLoaderVersion());
     luad::utils::luaSetVar("Loader_Sim_Version", getBuildVersion());
-    //free(engine);
 }
 
 void EngineSimApplication::luaGetEngineVars() {
     std::string result = "";
     Engine* engine = m_simulator.getEngine();
 
-    result = luad::utils::luaGetVar("Engine_Throttle");
-    double throt = std::stod(result);
-    engine->setThrottle(throt);
+    if (engine != nullptr) {
+        result = luad::utils::luaGetVar("Engine_Throttle");
+        double throt = std::stod(result);
+        engine->setThrottle(throt);
 
-    result = luad::utils::luaGetVar("Engine_ManifoldPressure");
-    double press = std::stod(result);
-    //for (int i = 0; engine->getIntakeCount(); i++) {
-    //    //Simulator* sim = &m_simulator;
-    //    //sim->getEngine()->getIntake(i)->addPress = press;
-    //}
-    //engine->press = press;
-    //Logger::DebugLine("setting intake press: " + result);
+        result = luad::utils::luaGetVar("Engine_ManifoldPressure");
+        double press = std::stod(result);
 
-    result = luad::utils::luaGetVar("Engine_IntakeFlow");
-    double flow = std::stod(result);
-    //engine->flow = flow;
-    //Logger::DebugLine("setting intake flow: " + result);
-    
-    //double res[5] = {};
-    //result = luad::utils::luaGetVar("Engine_Gear1");
-    //res[0] = std::stod(result);
-    //result = luad::utils::luaGetVar("Engine_Gear2");
-    //res[1] = std::stod(result);
-    //result = luad::utils::luaGetVar("Engine_Gear3");
-    //res[2] = std::stod(result);
-    //result = luad::utils::luaGetVar("Engine_Gear4");
-    //res[3] = std::stod(result);
-    //result = luad::utils::luaGetVar("Engine_Gear5");
-    //res[4] = std::stod(result);
-    //result = luad::utils::luaGetVar("Engine_Gear6");
-    //res[5] = std::stod(result);
+        result = luad::utils::luaGetVar("Engine_IntakeFlow");
+        double flow = std::stod(result);
 
-    //getSimulator()->getTransmission()->m_gearRatios = res;
-
-    engine->UpdateShit();
-
-    //free(engine);
-}
-
-void EngineSimApplication::luaGetUiVars() {
-    
-    /*luaSetUiVar("pink");
-    luaSetUiVar("green");
-    luaSetUiVar("yellow");
-    luaSetUiVar("red");
-    luaSetUiVar("orange");
-    luaSetUiVar("blue");
-    */
+        engine->UpdateShit();
+    }
 }
 
 void EngineSimApplication::reloadLua(std::string luaPath) {
     luad::data::reloading = true;
+
+    for (int i = 0; i < 100; i++) {
+        process_handlers[i] = 0;
+        tick_handlers[i] = 0;
+        start_handlers[i] = 0;
+    }
+
+    numProcessHandlers = 0;
+    numTickHandlers = 0;
+    numStartHandlers = 0;
     
     luad::data::reinit();
     loadLua(luaPath, false);
@@ -331,8 +307,6 @@ void EngineSimApplication::reloadLua(std::string luaPath) {
 }
 
 void EngineSimApplication::loadLua(std::string luaPath, bool first) {
-    //char buff[256];
-    //int error;
     //init is now done in luad::data::init()
     luad::data::init(this);
     s_modAmount = 0;
@@ -354,45 +328,36 @@ void EngineSimApplication::loadLua(std::string luaPath, bool first) {
     luad::utils::luaPushFunction("trace", luad::functions::luaTrace);
     luad::utils::luaPushFunction("Cinfo", luad::functions::luaInfo);
 
-    /*
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetPink, 0);
-    lua_setglobal(luad::data::L, "setPink");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetGreen, 0);
-    lua_setglobal(luad::data::L, "setGreen");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetYellow, 0);
-    lua_setglobal(luad::data::L, "setYellow");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetRed, 0);
-    lua_setglobal(luad::data::L, "setRed");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetOrange, 0);
-    lua_setglobal(luad::data::L, "setOrange");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetBlue, 0);
-    lua_setglobal(luad::data::L, "setBlue");
-    
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetVolume, 0);
-    lua_setglobal(luad::data::L, "setVolume");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetFrequency, 0);
-    lua_setglobal(luad::data::L, "setFrequency");
-    */
     luad::utils::luaPushFunction("CsetModel", luad::functions::luaSetModel);
     luad::utils::luaPushFunction("CsetTexture", luad::functions::luaSetTexture);
     luad::utils::luaPushFunction("CloadTexture", luad::functions::luaLoadTexture);
 
-    /*
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetTorqueUnit, 0);
-    lua_setglobal(luad::data::L, "setTorqueUnit");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetSpeedUnit, 0);
-    lua_setglobal(luad::data::L, "setSpeedUnit");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetAirflowUnit, 0);
-    lua_setglobal(luad::data::L, "setAirflowUnit");
-    lua_pushcclosure(luad::data::L, luad::functions::luaSetPressureUnit, 0);
-    lua_setglobal(luad::data::L, "setPressureUnit");
-    */
+    luad::utils::luaPushFunction("CsetIgnition", luad::functions::luaSetIgnition);
+    luad::utils::luaPushFunction("CsetInjection", luad::functions::luaSetInjection);
 
     luad::utils::luaPushFunction("CsetCrankWeight", luad::functions::luaSetCrankWeight);
     luad::utils::luaPushFunction("CsetFlywheelWeight", luad::functions::luaSetFlywheelWeight);
     luad::utils::luaPushFunction("CsetPistonWeight", luad::functions::luaSetPistonWeight);
     luad::utils::luaPushFunction("CsetConrodWeight", luad::functions::luaSetConrodWeight);
+
+    luad::utils::luaPushFunction("CsetGlobalInput", luad::functions::luaSetGlobalInput);
+
+    luad::utils::luaPushFunction("CsetThrottle", luad::functions::luaSetThrottle);
+    luad::utils::luaPushFunction("CsetManifoldPressure", luad::functions::luaSetManifoldPressure);
+    luad::utils::luaPushFunction("CsetIntakeFlow", luad::functions::luaSetIntakeFlow);
+    
+    luad::utils::luaPushFunction("Cimport", luad::functions::luaImport);
+
+    // IO
     luad::utils::luaPushFunction("CinitDNet", luad::functions::luaInitDNet);
+    luad::utils::luaPushFunction("CsendDNet", luad::functions::luaSendDNet);
+
+    // JSON
+    luad::utils::luaPushFunction("CjsonNew", luad::functions::luaJSONNew);
+    luad::utils::luaPushFunction("CjsonAddString", luad::functions::luaJSONAddString);
+    luad::utils::luaPushFunction("CjsonAddInt", luad::functions::luaJSONAddInt);
+    luad::utils::luaPushFunction("CjsonAddNumber", luad::functions::luaJSONAddNumber);
+    luad::utils::luaPushFunction("CjsonGetString", luad::functions::luaJSONGetString);
 
     lua_pushcclosure(luad::data::L, luad::functions::luaAddSynth, 0);
     lua_setglobal(luad::data::L, "CsynthAdd");
@@ -420,22 +385,20 @@ void EngineSimApplication::loadLua(std::string luaPath, bool first) {
         if (path != luaPath + "\\preConfig.lua" && path != luaPath + "\\config.lua")
         {
             Logger::DebugLine("Loading file: " + path);
-            //luaL_loadfile(luad::data::L, pathChar);
-            luaL_dofile(luad::data::L, path.c_str());
+            if (luaL_dofile(luad::data::L, path.c_str()) != LUA_OK) {
+                const char* msg = lua_tostring(luad::data::L, -1);
+                luaErr(msg);
+            }
             s_modAmount++;
         }
     }
 
     Logger::DebugLine("Loading preConfig...");
     if (fs::exists(luaPath + "\\preConfig.lua")) {
-
-        // prepare for compiling file
-        //luaSetupEngineVars(true);
-
-        luaL_dofile(luad::data::L, (luaPath + "/preConfig.lua").c_str());
-
-        // Get results
-        //luaGetUiVars();
+        if (luaL_dofile(luad::data::L, (luaPath + "/preConfig.lua").c_str()) != LUA_OK) {
+            const char* msg = lua_tostring(luad::data::L, -1);
+            luaErr(msg);
+        }
 
         Logger::DebugLine("PreConfig Loaded");
     }
@@ -452,14 +415,10 @@ void EngineSimApplication::luaLoadConfig(std::string luaPath) {
     Logger::DebugLine("Loading config...");
 
     if (fs::exists(luaPath + "\\config.lua")) {
-
-        // prepare for compiling file
-        //luaSetupEngineVars(true);
-
-        luaL_dofile(luad::data::L, (luaPath + "/config.lua").c_str());
-
-        // Get results
-        //luaGetUiVars();
+        if (luaL_dofile(luad::data::L, (luaPath + "/config.lua").c_str()) != LUA_OK) {
+            const char* msg = lua_tostring(luad::data::L, -1);
+            luaErr(msg);
+        }
 
         Logger::DebugLine("Config Loaded");
     }

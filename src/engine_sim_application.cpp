@@ -25,7 +25,7 @@
 #endif
 
 std::string EngineSimApplication::s_buildVersion = "0.1.11a";
-std::string EngineSimApplication::s_modLoaderVersion = "0.0.41a";
+std::string EngineSimApplication::s_modLoaderVersion = "0.0.5a";
 int EngineSimApplication::s_modAmount = 0;
 EngineSimApplication* EngineSimApplication::instance = nullptr;
 std::string luaScriptsPath = "../assets/lua";

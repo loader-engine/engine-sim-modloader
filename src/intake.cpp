@@ -1,6 +1,7 @@
 #include "../include/intake.h"
 
 #include "../include/units.h"
+#include "../include/loader/luad.h"
 
 #include <cmath>
 
@@ -60,6 +61,23 @@ void Intake::destroy() {
 void Intake::process(double dt) {
     m_flow += addFlow;
 
+    double efiMult = 1.0;
+    if (luad::data::app->efiSim) {
+        if (luad::data::app->m_iceEngine != nullptr) {
+            if (luad::data::app->m_iceEngine->getRpm() > luad::data::app->efiRPM) {
+                if (luad::data::app->m_iceEngine->getThrottle() == 1) {
+                    efiMult = 0.0;
+                }
+                else {
+                    efiMult = 1.0;
+                }
+            }
+            else {
+                efiMult = 1.0;
+            }
+        }
+    }
+
     //const double ideal_afr = 0.8 * m_molecularAfr * 3.75;
     double ideal_afr;
     if(rich)
@@ -71,14 +89,14 @@ void Intake::process(double dt) {
 
     const double p_air = ideal_afr / (1 + ideal_afr);
     GasSystem::Mix fuelAirMix;
-    fuelAirMix.p_fuel = 1 - p_air;
+    fuelAirMix.p_fuel = (1 - p_air) * efiMult;
     fuelAirMix.p_inert = p_air * 0.75;
     fuelAirMix.p_o2 = p_air * 0.25;
 
     const double idle_afr = 2.0;
     const double p_idle_air = idle_afr / (1 + idle_afr);
     GasSystem::Mix fuelMix;
-    fuelMix.p_fuel = (1.0 - p_idle_air);
+    fuelMix.p_fuel = (1.0 - p_idle_air) * efiMult;
     fuelMix.p_inert = p_idle_air * 0.75;
     fuelMix.p_o2 = p_idle_air * 0.25;
 

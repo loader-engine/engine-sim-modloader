@@ -8,7 +8,7 @@ time = 0
 function OnProcess(dt)
 	
 	-- this function is executed on EngineSimApplication::process()
-	-- avaiable vars and functions are listed in the documentation
+	-- available vars and functions are listed in the documentation
 
 end
 
@@ -32,7 +32,7 @@ addTickHandler(OnTick)
 
 message = string.format("Loaded Example Mod %s", ModVersion)
 es.trace(message)
-es.setModel("piston", "HemiPiston")
+-- es.setModel("piston", "HemiPiston")
 
 -- Please don't do this.
 -- info("Loaded mod")

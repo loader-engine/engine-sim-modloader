@@ -16,8 +16,13 @@ import "engines/mini/cooperS.mr"
 import "engines/mini/r56.mr"
 */
 
-import "themes/default.mr"
-import "engines/atg-video-2/01_subaru_ej25_eh.mr"
+import "themes/ddev.mr"
+//import "engines/atg-video-2/01_subaru_ej25_eh.mr"
+import "engines/atg-video-2/03_2jz.mr"
+//import "engines/kohler/lawnmower.mr"
 
 use_default_theme()
 main()
+
+//set_engine(kohler_ch750())
+//set_transmission(k_transmission())

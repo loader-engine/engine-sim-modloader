@@ -3,6 +3,7 @@
 #include "../engine_sim_application.h"
 #include "../utilities.h"
 #include "../lua/lua.hpp"
+#include "../ddevlib/djson/djson.hpp"
 #include <map>
 
 namespace luad {
@@ -19,6 +20,9 @@ namespace luad {
 		static EngineSimApplication* app;
 		static lua_State* L;
 		static bool reloading;
+
+		static djson::json json;
+		static std::string jsonStr;
 
 		static std::string pistonModelName;
 		static std::string headModelName;
@@ -49,6 +53,9 @@ namespace luad {
 
 		static int endDNet();
 
+		// template:
+		// static int lua(lua_State* lua);
+
 	public:
 		static int luaTrace(lua_State* lua);
 		static int luaInfo(lua_State* lua);
@@ -59,12 +66,30 @@ namespace luad {
 
 		static int luaAddSynth(lua_State* lua);
 
+		static int luaSetGlobalInput(lua_State* lua);
+
 		// IO
 		static int luaInitDNet(lua_State* lua);
+		static int luaSendDNet(lua_State* lua);
+
+		// JSON
+		static int luaJSONNew(lua_State* lua);
+		static int luaJSONGetString(lua_State* lua);
+		static int luaJSONAddString(lua_State* lua);
+		static int luaJSONAddInt(lua_State* lua);
+		static int luaJSONAddNumber(lua_State* lua);
 
 		// Engine
 		static int luaSetAntilag(lua_State* lua);
 		static int luaSetMixture(lua_State* lua);
+		static int luaSetIgnition(lua_State* lua);
+		static int luaSetInjection(lua_State* lua);
+
+		static int luaSetThrottle(lua_State* lua);
+		static int luaSetManifoldPressure(lua_State* lua);
+		static int luaSetIntakeFlow(lua_State* lua);
+
+		static int luaImport(lua_State* lua);
 
 		static int luaSetCrankWeight(lua_State* lua);
 		static int luaSetFlywheelWeight(lua_State* lua);
@@ -120,6 +145,8 @@ namespace luad {
 
 		static luad::partType decodePart(std::string part);
 		static dbasic::Material* getMaterialByName(std::string name);
+
+		static void luaError(std::string message);
 
 	};
 

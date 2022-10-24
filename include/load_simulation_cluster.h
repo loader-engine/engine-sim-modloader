@@ -20,6 +20,14 @@ class LoadSimulationCluster : public UiElement {
 
         void setSimulator(Simulator *simulator) { m_simulator = simulator; }
 
+        double m_filteredHorsepower;
+        double m_filteredTorque;
+
+        double m_peakHorsepowerRpm;
+        double m_peakHorsepower;
+        double m_peakTorqueRpm;
+        double m_peakTorque;
+
     private:
         Transmission *getTransmission() const { return m_simulator->getTransmission(); }
 
@@ -35,14 +43,6 @@ class LoadSimulationCluster : public UiElement {
         LabeledGauge *m_torqueGauge;
         LabeledGauge *m_hpGauge;
         LabeledGauge *m_clutchPressureGauge;
-
-        double m_filteredHorsepower;
-        double m_filteredTorque;
-
-        double m_peakHorsepowerRpm;
-        double m_peakHorsepower;
-        double m_peakTorqueRpm;
-        double m_peakTorque;
         
         std::string m_powerUnits;
         std::string m_torqueUnits;

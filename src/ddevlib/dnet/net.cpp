@@ -1,5 +1,6 @@
 
 #include "../../include/ddevlib/dnet/dnet.hpp"
+#include <winsock2.h>
 
 sockaddr_in dnet::net::server;
 int dnet::net::client_socket = NULL;
@@ -11,7 +12,7 @@ dnet::net::net() {
 int dnet::net::init() {
 
     WSADATA ws;
-    printf("Initialising Winsock...");
+    printf("DNET: Initialising Winsock... ");
     if (WSAStartup(MAKEWORD(2, 2), &ws) != 0)
     {
         printf("Failed. Error Code: %d", WSAGetLastError());
@@ -22,7 +23,7 @@ int dnet::net::init() {
     // create socket
     if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) // <<< UDP socket
     {
-        printf("socket() failed with error code: %d", WSAGetLastError());
+        printf("DNET: socket() failed with error code: %d\n", WSAGetLastError());
         return 2;
     }
 
@@ -38,7 +39,7 @@ int dnet::net::init() {
 int dnet::net::send(std::string message) {
     if (sendto(client_socket, message.c_str(), strlen(message.c_str()), 0, (sockaddr*)&server, sizeof(sockaddr_in)) == SOCKET_ERROR)
     {
-        printf("sendto() failed with error code: %d", WSAGetLastError());
+        printf("DNET: sendto() failed with error code: %d\n", WSAGetLastError());
         return 3;
     }
 
@@ -46,9 +47,13 @@ int dnet::net::send(std::string message) {
 }
 
 int dnet::net::end() {
+    printf("DNET: Closing socket... ");
+    
     closesocket(client_socket);
     WSACleanup();
     
+    printf("Done.\n");
+
     return 0;
 }
 

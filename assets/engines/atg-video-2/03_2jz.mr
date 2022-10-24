@@ -365,7 +365,7 @@ public node t2jz {
         wb_ignition(
             wires: wires,
             timing_curve: timing_curve,
-            rev_limit: 6500 * units.rpm
+            rev_limit: 7500 * units.rpm
         )
     )
 }
@@ -385,14 +385,18 @@ private node supra_vehicle {
 private node supra_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 500 * units.lb_ft
+            max_clutch_torque: 5000 * units.lb_ft
         )
         .add_gear(5.25)
         .add_gear(3.36)
         .add_gear(2.17)
         .add_gear(1.72)
         .add_gear(1.32)
-        .add_gear(1.0);
+        .add_gear(1.0)
+        .add_gear(0.7)
+        .add_gear(0.5)
+        .add_gear(0.3)
+        .add_gear(0.1);
 }
 
 public node main {

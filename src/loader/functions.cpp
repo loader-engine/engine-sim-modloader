@@ -9,6 +9,95 @@ luad::functions::functions() {
 
 }
 
+int luad::functions::luaSetGlobalInput(lua_State* lua) {
+    assert(lua_isboolean(lua, 1));
+
+    luad::data::app->m_engine.GetWindowSystem()->GetInputSystem()->SetGlobalInputEnabled(lua_toboolean(lua, 1));
+    
+    return 0;
+}
+
+int luad::functions::luaImport(lua_State* lua) {
+    assert(lua_isstring(lua, 1));
+
+    const char* filename = lua_tostring(lua, 1);
+
+    if (luaL_dofile(lua, filename) != LUA_OK) {
+        const char* msg = lua_tostring(luad::data::L, -1);
+        luad::utils::luaError(msg);
+    }
+
+    return 0;
+}
+
+int luad::functions::luaSetIgnition(lua_State* lua) {
+    assert(lua_isboolean(lua, 1));
+    assert(lua_isnumber(lua, 2));
+
+    const double state = lua_toboolean(lua, 1);
+    const double minRPM = (double)lua_tonumber(lua, 2);
+
+    luad::data::app->ignitionSim = state;
+    luad::data::app->ignitionRPM = minRPM;
+
+    return 0;
+}
+
+int luad::functions::luaSetThrottle(lua_State* lua) {
+    assert(lua_isnumber(lua, 1));
+
+    const double value = (double)lua_tonumber(lua, 1);
+
+    Engine* engine = luad::data::app->m_iceEngine;
+
+    if (engine != nullptr) {
+        engine->setSpeedControl(value);
+    }
+
+    return 0;
+}
+
+int luad::functions::luaSetIntakeFlow(lua_State* lua) {
+    assert(lua_isnumber(lua, 1));
+
+    const double value = (double)lua_tonumber(lua, 1);
+
+    Engine* engine = luad::data::app->m_iceEngine;
+
+    if (engine != nullptr) {
+        engine->flow = value;
+    }
+
+    return 0;
+}
+
+int luad::functions::luaSetManifoldPressure(lua_State* lua) {
+    assert(lua_isnumber(lua, 1));
+
+    const double value = (double)lua_tonumber(lua, 1);
+
+    Engine* engine = luad::data::app->m_iceEngine;
+
+    if (engine != nullptr) {
+        engine->press = value;
+    }
+
+    return 0;
+}
+
+int luad::functions::luaSetInjection(lua_State* lua) {
+    assert(lua_isboolean(lua, 1));
+    assert(lua_isnumber(lua, 2));
+
+    const double state = lua_toboolean(lua, 1);
+    const double minRPM = (double)lua_tonumber(lua, 2);
+
+    luad::data::app->efiSim = state;
+    luad::data::app->efiRPM = minRPM;
+
+    return 0;
+}
+
 int luad::functions::luaSetCrankWeight(lua_State* lua) {
     assert(lua_isnumber(lua, 1));
 
@@ -25,9 +114,73 @@ int luad::functions::luaInitDNet(lua_State* lua) {
     return result;
 }
 
+int luad::functions::luaSendDNet(lua_State* lua) {
+    assert(lua_isstring(lua, 1));
+
+    const char* strChar = lua_tostring(lua, 1);
+    std::string str(strChar);
+
+    int result = dnet::net::send(str);
+
+    return result;
+}
+
 int luad::functions::endDNet() {
     int result = dnet::net::end();
     return result;
+}
+
+int luad::functions::luaJSONNew(lua_State* lua) {
+    data::json = djson::json();
+
+    return 0;
+}
+
+int luad::functions::luaJSONGetString(lua_State* lua) {
+    data::jsonStr = data::json.toString();
+    utils::luaSetVar("JSON_String", data::jsonStr);
+
+    return 0;
+}
+
+int luad::functions::luaJSONAddString(lua_State* lua) {
+    assert(lua_isstring(lua, 1));
+    assert(lua_isstring(lua, 2));
+
+    const char* keyChar = lua_tostring(lua, 1);
+    const char* strChar = lua_tostring(lua, 2);
+    std::string key(keyChar);
+    std::string str(strChar);
+
+    data::json.addString(key, str);
+
+    return 0;
+}
+
+int luad::functions::luaJSONAddInt(lua_State* lua) {
+    assert(lua_isstring(lua, 1));
+    assert(lua_isinteger(lua, 2));
+
+    const char* keyChar = lua_tostring(lua, 1);
+    const int integer = lua_tointeger(lua, 2);
+    std::string key(keyChar);
+
+    data::json.addInt(key, integer);
+
+    return 0;
+}
+
+int luad::functions::luaJSONAddNumber(lua_State* lua) {
+    assert(lua_isstring(lua, 1));
+    assert(lua_isnumber(lua, 2));
+
+    const char* keyChar = lua_tostring(lua, 1);
+    const double doubling = (double)lua_tonumber(lua, 2);
+    std::string key(keyChar);
+
+    data::json.addInt(key, doubling);
+
+    return 0;
 }
 
 int luad::functions::luaSetFlywheelWeight(lua_State* lua) {
@@ -323,7 +476,6 @@ int luad::functions::luaSetFrequency(lua_State* lua) {
     assert(lua_isnumber(lua, 1));
 
     int freq = (int)lua_tonumber(lua, 1);
-    freq = clamp(freq, 400.0, 400000.0);
 
     EngineSimApplication::instance->m_simulator.setSimulationFrequency(freq);
 

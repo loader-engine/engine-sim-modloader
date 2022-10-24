@@ -85,3 +85,10 @@ dbasic::Material* luad::utils::getMaterialByName(std::string name) {
 
     return nullptr;
 }
+
+void luad::utils::luaError(std::string message) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+    printf("ERROR: %s\n", message.c_str());
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+}

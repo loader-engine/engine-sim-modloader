@@ -4,14 +4,16 @@
 #include <string>
 #include <stdlib.h>
 
-#define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
+//#define WIN32_LEAN_AND_MEAN
+//#include <winsock2.h>
 
 #pragma comment(lib,"ws2_32.lib") 
 #pragma warning(disable:4996) 
 
 #define SERVER "127.0.0.1"
 #define PORT 8888
+
+struct sockaddr_in;
 
 namespace dnet {
 

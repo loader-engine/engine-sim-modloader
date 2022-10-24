@@ -38,6 +38,9 @@ std::string luad::data::crankshaftSnoutTextureName = "None";
 std::string luad::data::crankshaftSnoutThreadsTextureName = "None";
 std::string luad::data::connectingRodTextureName = "None";
 
+djson::json luad::data::json = djson::json();
+std::string luad::data::jsonStr = "";
+
 luad::data::data() {
 
 }

@@ -59,10 +59,25 @@
                     - Sets the antilag setting.
                       often - if the system fires often
 
-                es.engine.setMixture(value)
+                es.engine.setMixture(state)
                     - Sets the mixture
                       true: rich
                       false: normal
+
+                es.engine.SetThrottle(value)
+                    - Sets the throttle to a certain value
+
+                es.engine.SetManifoldPressure(value)
+                    - Sets the manifold pressure to a certain value
+
+                es.engine.SetIntakeFlow(value)
+                    - Sets the intake flow to a certain value
+
+                es.engine.setIgnition(state, minRPM)
+                    - Sets the EFI Ignition simulation values
+
+                es.engine.setInjection(state, minRPM)
+                    - Sets the EFI Injection simulation values
 
                 es.engine.setCrankWeight(value)
                     - Sets the crankshaft weight to value (kilograms)
@@ -76,10 +91,41 @@
                 es.engine.setConrodWeight(value)
                     - Sets the conrod weight to value (grams)
 
+            LOADER FUNCTIONS:
+
+                es.loader.setGlobalInput(value)
+                    - Sets the global input to true or false
+
+                es.loader.import(filename)
+                    - Loads a file
+
+                es.loader.initDNet()
+                    - Inits DNet
+
+                es.loader.sendDNet(message)
+                    - Sends a message using DNet
+
+                es.loader.json.new()
+                    - Clears the JSON
+
+                es.loader.json.addString(key, str)
+                    - Adds a string to the JSON
+                
+                es.loader.json.addInt(key, integer)
+                    - Adds a integer to the JSON
+                
+                es.loader.json.addNumber(key, number)
+                    - Adds a number to the JSON
+
+                es.loader.json.getString()
+                    - Gets the string of the JSON
+
             VARIABLES:
                 
                 (GET) means you can only get the value. Setting the value won't do anything.
                 (GET, SET) means you can get and set the value.
+
+                (GET, SET) variables need to be set using 'Set(VARIABLE_NAME)'
                 
                 INPUT_Q, INPUT_W ... INPUT_N, INPUT_M (GET)
                     - Input values in format:
@@ -92,29 +138,44 @@
                     - Gets the simulator version.
 
 
-                es.engine.Engine_Name (GET)
+                es.engine.Name (GET)
                     - Gets the engine name.
 
-                es.engine.Engine_RPM (GET)
+                es.engine.RPM (GET)
                     - Gets the current engine RPM.
 
-                es.engine.Engine_AFR (GET)
+                es.engine.Speed (GET)
+                    - Gets the vehicle speed
+
+                es.engine.Redline (GET)
+                    - Gets the engine redline
+
+                es.engine.Gear (GET)
+                    - Gets the current gear
+
+                es.engine.AFR (GET)
                     - Gets the current engine A/F ratio.
 
-                es.engine.Engine_Throttle (GET, SET)
+                es.engine.Throttle (GET, SET)
                     - Gets or sets the engine throttle.
                       NOTE: throttle 1 means the throttle is closed and 0 means opened.
 
-                es.engine.Engine_ManifoldPressure (GET, SET)
+                es.engine.ManifoldPressure (GET, SET)
                     - Gets or sets the current manifold pressure (in atmospheres).
                       NOTE: set pressure is ADDED to the current pressure.
 
-                es.engine.Engine_ExhaustFlow (GET)
+                es.engine.ExhaustFlow (GET)
                     - Gets the average exhaust flow.
 
-                es.engine.Engine_IntakeFlow (GET, SET)
+                es.engine.IntakeFlow (GET, SET)
                     - Gets or sets the intake flow.
 
-                es.Simulator_FPS (GET)
+                es.engine.dyno.Torque (GET)
+                    - Gets the dyno torque
+
+                es.engine.dyno.Power (GET)
+                    - Gets the dyno power
+
+                Simulator_FPS (GET)
                     - Gets the current simulator FPS.
 

@@ -144,7 +144,7 @@ public node subaru_ej25 {
         hf_gain: 0.01,
         noise: 1.0,
         jitter: 0.5,
-        simulation_frequency: 20000
+        simulation_frequency: 10000
     )
 
     wires wires()
@@ -362,14 +362,17 @@ private node impreza {
 private node impreza_transmission {
     alias output __out:
         transmission(
-            max_clutch_torque: 300 * units.lb_ft
+            max_clutch_torque: 3000 * units.lb_ft
         )
         .add_gear(3.636)
         .add_gear(2.375)
         .add_gear(1.761)
         .add_gear(1.346)
         .add_gear(0.971)
-        .add_gear(0.756);
+        .add_gear(0.756)
+        .add_gear(0.556)
+        .add_gear(0.356)
+        .add_gear(0.156);
 }
 
 public node main {

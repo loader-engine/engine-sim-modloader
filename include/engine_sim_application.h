@@ -170,6 +170,13 @@ class EngineSimApplication {
         bool antilag = false;
         bool often = false;
         double ratios[5];
+
+        bool ignitionSim = false;
+        double ignitionRPM = 1500;
+
+        bool efiSim = false;
+        double efiRPM = 1500;
+
     protected:
 
         void loadLua(std::string luaPath, bool first = true);
@@ -178,29 +185,20 @@ class EngineSimApplication {
         void unloadLua();
         void luaFail(std::string error);
 
-        /*
-        int luaSetPink(lua_State* lua);
-        int luaSetGreen(lua_State* lua);
-        int luaSetYellow(lua_State* lua);
-        int luaSetRed(lua_State* lua);
-        int luaSetOrange(lua_State* lua);
-        int luaSetBlue(lua_State* lua);
-        */
-
         void luaSetupVars();
         void luaSetInVar(ysKey::Code code, std::string* name);
 
         void luaSetupEngineVars(bool start);
 
         void luaGetEngineVars();
-        void luaGetUiVars();
-        //void luaSetUiVar(std::string color);
 
         // LUA FUNCTIONS
         void luaProcess(float dt);
         void luaTick(float dt);
 
         void luaStart();
+
+        void luaErr(std::string message);
 
         float m_displayHeight;
         int m_gameWindowHeight;

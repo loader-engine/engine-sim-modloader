@@ -4,6 +4,8 @@
 #include "../include/constants.h"
 #include "../include/units.h"
 
+#include "../include/loader/luad.h"
+
 #include <cmath>
 
 IgnitionModule::IgnitionModule() {
@@ -53,7 +55,24 @@ void IgnitionModule::reset() {
 void IgnitionModule::update(double dt) {
     const double cycleAngle = m_crankshaft->getCycleAngle();
 
-    if (m_enabled && m_revLimitTimer == 0) {
+    bool efiCond = true;
+    if (luad::data::app->ignitionSim) {
+        if (luad::data::app->m_iceEngine != nullptr) {
+            if (luad::data::app->m_iceEngine->getRpm() > luad::data::app->ignitionRPM) {
+                if (luad::data::app->m_iceEngine->getThrottle() == 1) {
+                    efiCond = false;
+                }
+                else {
+                    efiCond = true;
+                }
+            }
+            else {
+                efiCond = true;
+            }
+        }
+    }
+
+    if (m_enabled && efiCond && m_revLimitTimer == 0) {
         const double fourPi = 4 * constants::pi;
         const double advance = getTimingAdvance();
 

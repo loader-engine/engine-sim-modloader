@@ -15,7 +15,7 @@ threshold = 0.00001
 function OnProcess(dt)
 	
 	-- this function is executed on EngineSimApplication::process()
-	-- avaiable vars and functions are listed in the documentation
+	-- available vars and functions are listed in the documentation
 
 	-- add the spool and stuff
 	flow = tonumber(Engine_ExhaustFlow)
@@ -69,7 +69,9 @@ end
 
 addStartHandler(OnStart)
 addProcessHandler(OnProcess)
+
 message = string.format("Loaded Turbo Mod %s", ModVersion)
 trace(message)
 
---info("Loaded mod")
+message = "PLEASE MIND THIS MOD MIGHT NOT WORK!!!"
+trace(message)

@@ -88,27 +88,21 @@ namespace djson {
 			std::string out;
 			int indent = 1;
 
-			out += "{\n";
+			out += "{";
 
 			int count = 1;
 			for (std::pair<std::string, djson::jsonVar> var : items)
 			{
-				for (int i = 0; i < indent; i++) {
-					out += "    ";
-				}
-
 				out += "\"" + var.first + "\": " + var.second.toString();
 				
 				if (count != len) {
 					out += ",";
 				}
 
-				out += "\n";
-
 				count++;
 			}
 
-			out += "}\n";
+			out += "}";
 
 			return out;
 		}
