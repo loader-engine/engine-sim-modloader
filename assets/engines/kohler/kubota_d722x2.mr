@@ -1,0 +1,283 @@
+import "engine_sim.mr"
+
+units units()
+constants constants()
+impulse_response_library ir_lib()
+
+label cycle(2 * 360 * units.deg)
+
+private node wires {
+    output wire1: ignition_wire();
+    output wire2: ignition_wire();
+    output wire3: ignition_wire();
+    output wire4: ignition_wire();
+    output wire5: ignition_wire();
+    output wire6: ignition_wire();
+}
+
+private node kubota_d722_distributor {
+    input wires;
+    input timing_curve;
+    input rev_limit: 6600 * units.rpm;
+    input limiter_duration: 0.050 * units.sec;
+    alias output __out:
+        ignition_module(timing_curve: timing_curve, rev_limit: rev_limit, limiter_duration: limiter_duration)
+            .connect_wire(wires.wire1, (0.25 / 6.0) * cycle)
+            .connect_wire(wires.wire2, (1.0  / 6.0) * cycle)
+            .connect_wire(wires.wire3, (1.75 / 6.0) * cycle)
+            .connect_wire(wires.wire4, (3.0 / 6.0) * cycle)
+            .connect_wire(wires.wire5, (4.0 / 6.0) * cycle)
+            .connect_wire(wires.wire6, (5.0 / 6.0) * cycle);
+}
+
+private node kubota_d722_camshaft_builder {
+    input lobe_profile;
+    input intake_lobe_profile: lobe_profile;
+    input exhaust_lobe_profile: lobe_profile;
+    input lobe_separation: 114.0 * units.deg;
+    input intake_lobe_center: lobe_separation;
+    input exhaust_lobe_center: lobe_separation;
+    input advance: 0.0 * units.deg;
+    input base_radius: 0.75 * units.inch;
+
+    output exhaust_cam: _exhaust_cam;
+    output intake_cam: _intake_cam;
+
+    camshaft_parameters params(
+        advance: advance,
+        base_radius: base_radius
+    )
+
+    camshaft _exhaust_cam(params, lobe_profile: exhaust_lobe_profile)
+    camshaft _intake_cam(params, lobe_profile: intake_lobe_profile)
+
+    label rot(2 * (360 / 6.0) * units.deg)
+    label rot90(90 * units.deg)
+    label rot360(360 * units.deg)
+
+    _exhaust_cam
+        .add_lobe(rot360 - exhaust_lobe_center)
+        .add_lobe(rot360 - exhaust_lobe_center + 1 * rot)
+        .add_lobe(rot360 - exhaust_lobe_center + 1.75 * rot)
+        .add_lobe(rot360 - exhaust_lobe_center + 2.75 * rot)
+        .add_lobe(rot360 - exhaust_lobe_center + 3.75 * rot)
+        .add_lobe(rot360 - exhaust_lobe_center + 4.75 * rot)
+        .add_lobe(rot360 - exhaust_lobe_center + 5.75 * rot)
+    _intake_cam
+        .add_lobe(rot360 + intake_lobe_center)
+        .add_lobe(rot360 + intake_lobe_center + 1 * rot)
+        .add_lobe(rot360 + intake_lobe_center + 1.75 * rot)
+        .add_lobe(rot360 + intake_lobe_center + 2.75 * rot)
+        .add_lobe(rot360 + intake_lobe_center + 3.75 * rot)
+        .add_lobe(rot360 + intake_lobe_center + 4.75 * rot)
+        .add_lobe(rot360 + intake_lobe_center + 5.75 * rot)
+}
+
+public node kubota_d722 {
+    alias output __out: engine;
+
+    engine engine(
+        name: "Kubota D722 I6",
+        starter_torque: 150 * units.lb_ft,
+        starter_speed: 500 * units.rpm,
+        redline: 5600 * units.rpm
+    )
+
+    wires wires()
+
+    crankshaft c0(
+        throw: 68 * units.mm / 2,
+        flywheel_mass: 5 * units.lb,
+        mass: 5 * units.lb,
+        friction_torque: 10.0 * units.lb_ft,
+        moment_of_inertia: 0.22986844776863666 * 0.5,
+        position_x: 0.0,
+        position_y: 0.0,
+        tdc: 120 * units.deg
+    )
+
+    rod_journal rj0(angle: (0.0 / 6.0) * 360 * units.deg)
+    rod_journal rj1(angle: (2.0 / 6.0) * 360 * units.deg)
+    rod_journal rj2(angle: (3.0 / 6.0) * 360 * units.deg)
+    rod_journal rj3(angle: (4.0 / 6.0) * 360 * units.deg)
+    rod_journal rj4(angle: (5.0 / 6.0) * 360 * units.deg)
+    rod_journal rj5(angle: (6.0 / 6.0) * 360 * units.deg)
+    c0
+        .add_rod_journal(rj0)
+        .add_rod_journal(rj1)
+        .add_rod_journal(rj2)
+        .add_rod_journal(rj3)
+        .add_rod_journal(rj4)
+        .add_rod_journal(rj5)
+
+    piston_parameters piston_params(
+        mass: 400 * units.g,
+        //blowby: k_28inH2O(0.1),
+        compression_height: 1.0 * units.inch,
+        wrist_pin_position: 0.0,
+        displacement: 0.0
+    )
+
+    connecting_rod_parameters cr_params(
+        mass: 300.0 * units.g,
+        moment_of_inertia: 0.0015884918028487504,
+        center_of_mass: 0.0,
+        length: 4.4 * units.inch
+    )
+
+    cylinder_bank_parameters bank_params(
+        bore: 67 * units.mm,
+        deck_height: (4.0 + 1) * units.inch + 69 * units.mm / 2
+    )
+
+    intake intake(
+        plenum_volume: 1.0 * units.L,
+        plenum_cross_section_area: 10.0 * units.cm2,
+        intake_flow_rate: k_carb(50.0),
+        idle_flow_rate: k_carb(0.0),
+        idle_throttle_plate_position: 0.975,
+        throttle_gamma: 1.0
+    )
+
+    exhaust_system_parameters es_params(
+        outlet_flow_rate: k_carb(300.0),
+        primary_tube_length: 500.0 * units.inch,
+        primary_flow_rate: k_carb(200.0),
+        velocity_decay: 1.0,
+        volume: 20.0 * units.L
+    )
+
+    exhaust_system exhaust0(
+        es_params,
+        audio_volume: 1.0,
+        impulse_response: ir_lib.default_0
+    )
+
+    cylinder_bank b0(bank_params, angle: 0 * units.deg)
+    b0
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj0,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire1
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj1,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire2
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj2,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire3
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj3,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire4
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj4,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire5
+        )
+        .add_cylinder(
+            piston: piston(piston_params, blowby: k_28inH2O(0.01)),
+            connecting_rod: connecting_rod(cr_params),
+            rod_journal: rj5,
+            intake: intake,
+            exhaust_system: exhaust0,
+            ignition_wire: wires.wire6
+        )
+
+    engine
+        .add_cylinder_bank(b0)
+
+    engine.add_crankshaft(c0)
+
+    harmonic_cam_lobe lobe(
+        duration_at_50_thou: 160 * units.deg,
+        gamma: 1.1,
+        lift: 200 * units.thou,
+        steps: 100
+    )
+
+    kubota_d722_camshaft_builder camshaft(
+        lobe_profile: lobe,
+        lobe_separation: 114 * units.deg,
+        base_radius: 500 * units.thou
+    )
+
+    b0.set_cylinder_head (
+        generic_small_engine_head(
+            chamber_volume: 50 * units.cc,
+            intake_camshaft: camshaft.intake_cam,
+            exhaust_camshaft: camshaft.exhaust_cam
+        )
+    )
+
+    function timing_curve(1000 * units.rpm)
+    timing_curve
+        .add_sample(0000 * units.rpm, 20 * units.deg)
+        .add_sample(1000 * units.rpm, 20 * units.deg)
+        .add_sample(2000 * units.rpm, 20 * units.deg)
+        .add_sample(3000 * units.rpm, 20 * units.deg)
+        .add_sample(4000 * units.rpm, 20 * units.deg)
+
+    engine.add_ignition_module(
+        kubota_d722_distributor(
+            wires: wires,
+            timing_curve: timing_curve,
+            rev_limit: 7000 * units.rpm
+        ))
+}
+
+private node direct_drive {
+    alias output __out: transmission;
+
+    transmission transmission(
+        max_clutch_torque: 1075 * units.lb_ft
+    )
+
+    transmission.add_gear(5.0)
+    transmission.add_gear(4.0)
+    transmission.add_gear(3.0)
+    transmission.add_gear(2.0)
+    transmission.add_gear(1.0)
+    transmission.add_gear(0.75)
+    transmission.add_gear(0.5)
+    transmission.add_gear(0.35)
+    transmission.add_gear(0.15)
+}
+
+private node static_load {
+    alias output __out:
+        vehicle(
+            mass: 563 * units.lb,
+            drag_coefficient: 0.1,
+            cross_sectional_area: (20 * units.inch) * (47 * units.inch),
+            diff_ratio: 2.353,
+            tire_radius: 8.5 * units.inch,
+            rolling_resistance: 10 * units.N
+        );
+}
+
+public node main {
+    set_engine(kubota_d722())
+    set_transmission(direct_drive())
+    set_vehicle(static_load())
+}
